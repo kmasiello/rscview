@@ -1,0 +1,46 @@
+---
+title: "Content Audit Update"
+output: blastula::blastula_email
+---
+
+# RStudio Connect Audit Update
+
+## Content Audit Report at a Glance
+
+```{r content-list, include=FALSE}
+```
+
+```{r include=FALSE}
+library(lubridate)
+
+# Get the number of content items created last week
+last_week <- df_full %>%
+  filter(created_time >= today() - days(7))
+
+# Get the number of content items created last month
+last_month <- df_full %>%
+  filter(created_time >= today() - days(30))
+```
+
+- **There are `r nrow(df_full)` content items on the server**
+- `r nrow(last_week)` content items have been created in the last seven days
+- `r nrow(last_month)` content items have been created in the last thirty days
+
+<br>
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+library(ggplot2)
+
+# Bar plot of content items by type
+df_full %>% 
+  count(app_mode, sort = TRUE) %>%
+  ggplot(aes(y = app_mode, x = n)) +
+  geom_bar(stat = "identity") + 
+  theme_minimal() + 
+  labs(title = "Number of Content Items by Type",
+       x = "Content Count",
+       y = "Content Type")+
+  theme(plot.title.position = "plot")
+```
+
+### Click through the links below to explore or download the entire audit report.

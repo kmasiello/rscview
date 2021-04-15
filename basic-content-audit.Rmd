@@ -1,0 +1,100 @@
+---
+title: "Basic Content Audit w/ Email Update"
+output: 
+  html_document:
+    theme: lumen
+rmd_output_metadata:
+  rsc_output_files:
+    - "rsc-basic-audit.csv"
+editor_options: 
+  chunk_output_type: console
+---
+
+`r if(Sys.getenv('CONNECT_SERVER') == '') { "<h4>ERROR: You must set the CONNECT_SERVER environment variable</h4>\n" }`
+`r if(Sys.getenv('CONNECT_API_KEY') == '') { "<h4>ERROR: You must set the CONNECT_API_KEY environment variable</h4>\n" }`
+`r if(Sys.getenv('CONNECT_API_KEY') == '' || Sys.getenv('CONNECT_SERVER') == '') { knitr::knit_exit() }`
+
+## List all content items on the RStudio Connect server and send a custom email update
+
+To pull a complete list of the content items on your Connect server, you must use an API key generated from an Admin account. Publisher account API keys will only return content items which the publisher user has been given access to view or edit.
+
+Requirements:
+
+- [Administrator API Key](https://docs.rstudio.com/connect/user/api-keys/#api-keys-creating){target="_blank"}
+- RStudio Connect server URL
+
+```{r content-list, include=FALSE}
+library(httr)
+library(tidyr)
+library(xml2)
+
+# Use the /v1/content endpoint to retrieve the full list of content items
+result <- GET(
+  paste0(Sys.getenv("CONNECT_SERVER"),"__api__/v1/content"),
+    add_headers(Authorization = paste("Key", Sys.getenv("CONNECT_API_KEY"))))
+
+# Create a tibble for the content list result response
+df_full <- unnest_wider(tibble::tibble(dat = content(result)), dat) 
+
+df_full
+```
+
+### Download the full report contents
+
+```{r include=FALSE}
+
+# Write the full content list reponse out to a CSV file for download
+write.csv(df_full, "rsc-basic-audit.csv", row.names=FALSE)
+```
+
+- Report: [rsc-basic-audit.csv](rsc-basic-audit.csv)
+
+---
+
+## Explore the content list report
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+library(dplyr)
+library(reactable)
+library(xml2)
+library(pins)
+
+# Filter the full response to select specific fields for viewing
+df_view <- df_full %>%
+  select(name, title, owner_guid, dashboard_url, app_mode, access_type, r_version, py_version, created_time, last_deployed_time)
+
+# cross with the user pin to map owner_guid to username
+df_users <- pin_get("katie/user-info", board = "rsconnect")
+user_lookup <- df_users %>% select(username, guid)
+
+df_view <- df_view %>% left_join(user_lookup, by = c("owner_guid" = "guid")) %>%
+  relocate(username, .after = title) %>% relocate(owner_guid, .after = last_deployed_time)
+
+# Use reactable to create a nicely formatted table
+reactable(df_view, searchable = TRUE, highlight = TRUE, resizable = TRUE,
+  filterable = TRUE, columns = list(
+  name = colDef(name = "Name"),
+  title = colDef(name = "Title"),
+  username = colDef(name = "Username"),
+  dashboard_url = colDef(name = "Content URL", cell = function(value) {
+    htmltools::tags$a(href = value, target = "_blank", "Link")
+    }),
+  app_mode = colDef(name = "Type"),
+  access_type = colDef(name = "Access Level"),
+  r_version = colDef(name = "R Version"),
+  py_version = colDef(name = "Python Version"),
+  created_time = colDef(name = "Created", format = colFormat(datetime = TRUE)),
+  last_deployed_time = colDef(name = "Last Deployed", format = colFormat(datetime = TRUE))
+))
+```
+
+
+```{r connect_email, include=FALSE}
+library(blastula)
+
+# Attach a custom email
+render_connect_email(input = "content-audit-email.Rmd") %>%
+  attach_connect_email(
+    subject = "RStudio Connect Content Audit"
+  )
+```
