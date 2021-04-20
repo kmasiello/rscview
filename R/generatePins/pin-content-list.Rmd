@@ -1,0 +1,42 @@
+---
+title: "Pin Content List for Audit Report"
+output: html_document
+---
+
+`r if(Sys.getenv('CONNECT_SERVER') == '') { "<h4>ERROR: You must set the CONNECT_SERVER environment variable</h4>\n" }`
+`r if(Sys.getenv('CONNECT_API_KEY') == '') { "<h4>ERROR: You must set the CONNECT_API_KEY environment variable</h4>\n" }`
+`r if(Sys.getenv('CONNECT_API_KEY') == '' || Sys.getenv('CONNECT_SERVER') == '') { knitr::knit_exit() }`
+
+List all content items visible to the requesting user.
+
+Authenticated access from a user is required. If an "administrator" role is used, then all content items will be returned regardless of the visibility to the requesting user.
+
+## Pin Content List to RStudio Connect
+
+```{r}
+library(httr)
+library(tidyr)
+
+# Use the /v1/content endpoint to retrieve the full list of content items
+result <- GET(
+  paste0(Sys.getenv("CONNECT_SERVER"),"__api__/v1/content"),
+    add_headers(Authorization = paste("Key", Sys.getenv("CONNECT_API_KEY"))))
+
+# Create a tibble for the content list result response
+content_list <- unnest_wider(tibble::tibble(dat = content(result)), dat) 
+```
+
+```{r}
+library(pins)
+
+# Pin the content data in content_list to RStudio Connect
+
+# Pins will use CONNECT_API_KEY and CONNECT_SERVER by default,
+# but we are being explicit here anyway.
+pins::board_register_rsconnect(
+  key = Sys.getenv("CONNECT_API_KEY"), 
+  server = Sys.getenv("CONNECT_SERVER")
+)
+
+pins::pin(content_list, name = "content-info", description = "Results pulled from the /v1/content API", board = "rsconnect")
+```
