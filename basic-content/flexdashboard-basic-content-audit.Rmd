@@ -7,18 +7,16 @@ editor_options:
   chunk_output_type: console
 ---
 
-```{r setup, include=FALSE}
+```{r package-load, include=FALSE}
 library(flexdashboard)
 library(tidyverse)
-```
-
-```{r include = FALSE}
 library(httr)
-library(tidyr)
 library(xml2)
 library(pins)
+library(reactable)
+```
 
-
+```{r include=FALSE}
 board_register("rsconnect", server = "https://colorado.rstudio.com/rsc")
 
 # Retrieve Pin
@@ -66,11 +64,6 @@ Column {data-width=650}
 ### Chart A
 
 ```{r}
-library(dplyr)
-library(reactable)
-library(xml2)
-library(pins)
-
 # Filter the full response to select specific fields for viewing
 df_view <- df_full %>%
   select(name, title, owner_guid, app_mode, access_type, r_version, py_version, created_time, last_deployed_time)

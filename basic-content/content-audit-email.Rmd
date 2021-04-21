@@ -3,6 +3,11 @@ title: "Content Audit Update"
 output: blastula::blastula_email
 ---
 
+```{r package-load, include=FALSE}
+library(lubridate)
+library(ggplot2)
+```
+
 # RStudio Connect Audit Update
 
 ## Content Audit Report at a Glance
@@ -11,8 +16,6 @@ output: blastula::blastula_email
 ```
 
 ```{r include=FALSE}
-library(lubridate)
-
 # Get the number of content items created last week
 last_week <- df_full %>%
   filter(created_time >= today() - days(7))
@@ -29,8 +32,6 @@ last_month <- df_full %>%
 <br>
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE}
-library(ggplot2)
-
 # Bar plot of content items by type
 df_full %>% 
   count(app_mode, sort = TRUE) %>%
