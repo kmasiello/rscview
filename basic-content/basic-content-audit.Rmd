@@ -14,7 +14,7 @@ editor_options:
 `r if(Sys.getenv('CONNECT_API_KEY') == '') { "<h4>ERROR: You must set the CONNECT_API_KEY environment variable</h4>\n" }`
 `r if(Sys.getenv('CONNECT_API_KEY') == '' || Sys.getenv('CONNECT_SERVER') == '') { knitr::knit_exit() }`
 
-```{r package-load, include=FALSE}
+```{r packages, include=FALSE}
 library(httr)
 library(xml2)
 library(dplyr)
