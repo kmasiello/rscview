@@ -1,63 +1,40 @@
 ---
-title: "Use Connect API to Generate Pins"
+title: "Use connectapi to Generate Pins"
 output: html_document
+editor_options: 
+  chunk_output_type: console
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+library(connectapi) #will be on CRAN soon
+library(rscview)
+library(pins)
 ```
 
 ```{r envCheck, include=FALSE}
 #Check that environment variables are set, exit knit if not.
-library(connectview)
 check_envvars()
 ```
+
+```{r client-setup}
+client <- connect(
+  host = Sys.getenv("CONNECT_SERVER"),
+  api_key = Sys.getenv("CONNECT_API_KEY")
+)
+```
+
 ---
 
 ## Pin User Information to RStudio Connect
 
-List local users with the `GET /v1/users` endpoint. This endpoint uses offset pagination (using page numbers). Results are sorted by first name, then last name, then username, then email. When called with a prefix parameter (not used in this example), it searches for local users matching the prefix.
+List local users with the `connectapi` package.
 
 ```{r}
-library(httr)
-
-# Request a page of up to 25 users.
-resp <- GET(
-  paste0(Sys.getenv("CONNECT_SERVER"), "__api__/v1/users?page_size=25"),
-  add_headers(Authorization = paste("Key", Sys.getenv("CONNECT_API_KEY")))
-)
-payload <- content(resp)
-
-payload_list <- list()
-# While the current page has results, add its contents to the list holder
-# then advance to the next page.
-while(length(payload$result) > 0) {
-
-  payload_list[[length(payload_list) + 1]] <- payload$results
-
-  # get the next page
-  nextPage <- payload$current_page + 1
-  resp <- GET(
-    paste0(Sys.getenv("CONNECT_SERVER"), "__api__/v1/users?page_size=25&page_number=", nextPage),
-    add_headers(Authorization = paste("Key", Sys.getenv("CONNECT_API_KEY")))
-  )
-  payload <- content(resp)
-}
+df_users <- get_users(client, limit = Inf)
 ```
 
 ```{r}
-library(tidyr)
-
-# Unnest the list of lists into a single column tibble of lists
-users_list <- unnest_longer(tibble::tibble(dat = payload_list), dat) 
-
-# Rectangle the tibble of lists into a tibble of usable column data
-df_users <- unnest_wider(users_list, dat)
-```
-
-```{r}
-library(pins)
-
 # Pin the user data in df_users to RStudio Connect
 
 # Pins will use CONNECT_API_KEY and CONNECT_SERVER by default,
@@ -67,62 +44,25 @@ pins::board_register_rsconnect(
   server = Sys.getenv("CONNECT_SERVER")
 )
 
-pins::pin(df_users, name = "user-info", description = "Results pulled from the /v1/users API", board = "rsconnect")
+pins::pin(df_users, name = "user-info", description = "Results pulled from `connectapi::get_users()`", board = "rsconnect")
 ```
 
 ---
 
 ## Pin Groups Information to RStudio Connect 
 
-List local groups with the `GET /v1/groups` endpoint. This endpoint uses offset pagination (using page numbers).
+List local groups with the `connectapi` package.
 
 **Note: This endpoint is available only when groups are enabled in RStudio Connect and it will return an error otherwise.**
 
 ```{r}
-library(httr)
-
-# Request a page of up to 25 groups.
-resp <- GET(
-  paste0(Sys.getenv("CONNECT_SERVER"), "__api__/v1/groups?page_size=25"),
-  add_headers(Authorization = paste("Key", Sys.getenv("CONNECT_API_KEY")))
-)
-payload <- content(resp)
-
-payload_list <- list()
-# While the current page has results, add its contents to the list holder
-# then advance to the next page.
-while(length(payload$result) > 0) {
-
-  payload_list[[length(payload_list) + 1]] <- payload$results
-
-  # get the next page
-  nextPage <- payload$current_page + 1
-  resp <- GET(
-    paste0(Sys.getenv("CONNECT_SERVER"), "__api__/v1/groups?page_size=25&page_number=", nextPage),
-    add_headers(Authorization = paste("Key", Sys.getenv("CONNECT_API_KEY")))
-  )
-  payload <- content(resp)
-}
+df_groups <- get_groups(client, limit = Inf)
 ```
 
 
 ```{r}
-library(tidyr)
-
-# Unnest the list of lists into a single column tibble of lists
-groups_list <- unnest_longer(tibble::tibble(dat = payload_list), dat) 
-
-# Rectangle the tibble of lists into a tibble of usable column data
-df_groups <- unnest_wider(groups_list, dat)
-```
-
-
-```{r}
-library(pins)
-
 # Pin the user data in df_groups to RStudio Connect
-
-pins::pin(df_groups, name = "group-info", description = "Results pulled from the /v1/groups API", board = "rsconnect")
+pins::pin(df_groups, name = "group-info", description = "Results pulled from `connectapi::get_groups()`", board = "rsconnect")
 ```
 
 ---
@@ -141,7 +81,10 @@ result <- GET(
     add_headers(Authorization = paste("Key", Sys.getenv("CONNECT_API_KEY"))))
 
 # Create a tibble for the content list result response
-content_list <- unnest_wider(tibble::tibble(dat = content(result)), dat) 
+content_list <- unnest_wider(tibble::tibble(dat = content(result)), dat)
+
+
+# content_list2 <- get_content(client, limit = Inf)
 ```
 
 ```{r}
