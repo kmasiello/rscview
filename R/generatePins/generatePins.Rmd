@@ -17,12 +17,26 @@ library(pins)
 check_envvars()
 ```
 
-```{r client-setup}
+```{r setup}
 client <- connect(
   host = Sys.getenv("CONNECT_SERVER"),
   api_key = Sys.getenv("CONNECT_API_KEY")
 )
+
+pins::board_register_rsconnect(
+  key = Sys.getenv("CONNECT_API_KEY"), 
+  server = Sys.getenv("CONNECT_SERVER")
+)
 ```
+
+## All audit content will be given a tag. Specify that tag and hierarchy here:
+```{r}
+tag_name <- "Server Audit"
+tag_parent <- "Projects and Presentations"
+#create the tag -- will not give message if tag already exists.
+create_tag_tree(client, tag_parent, tag_name)
+```
+
 
 ---
 
@@ -37,14 +51,9 @@ df_users <- get_users(client, limit = Inf)
 ```{r}
 # Pin the user data in df_users to RStudio Connect
 
-# Pins will use CONNECT_API_KEY and CONNECT_SERVER by default,
-# but we are being explicit here anyway.
-pins::board_register_rsconnect(
-  key = Sys.getenv("CONNECT_API_KEY"), 
-  server = Sys.getenv("CONNECT_SERVER")
-)
-
-pins::pin(df_users, name = "user-info", description = "Results pulled from `connectapi::get_users()`", board = "rsconnect")
+pin_users <- pins::pin(df_users, name = "user-info", description = "Results pulled from `connectapi::get_users()`", board = "rsconnect")
+# tag it
+set_content_tag_tree(pin_users, tag_parent, tag_name)
 ```
 
 ---
@@ -62,7 +71,10 @@ df_groups <- get_groups(client, limit = Inf)
 
 ```{r}
 # Pin the user data in df_groups to RStudio Connect
-pins::pin(df_groups, name = "group-info", description = "Results pulled from `connectapi::get_groups()`", board = "rsconnect")
+pin_groups <- pins::pin(df_groups, name = "group-info", description = "Results pulled from `connectapi::get_groups()`", board = "rsconnect")
+
+# tag it
+set_content_tag_tree(pin_groups, tag_parent, tag_name)
 ```
 
 ---
@@ -92,12 +104,7 @@ library(pins)
 
 # Pin the content data in content_list to RStudio Connect
 
-# Pins will use CONNECT_API_KEY and CONNECT_SERVER by default,
-# but we are being explicit here anyway.
-pins::board_register_rsconnect(
-  key = Sys.getenv("CONNECT_API_KEY"), 
-  server = Sys.getenv("CONNECT_SERVER")
-)
-
-pins::pin(content_list, name = "content-info", description = "Results pulled from the /v1/content API", board = "rsconnect")
+pin_content <- pins::pin(content_list, name = "content-info", description = "Results pulled from the /v1/content API", board = "rsconnect")
+# tag it
+set_content_tag_tree(pin_content, tag_parent, tag_name)
 ```
