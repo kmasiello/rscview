@@ -1,0 +1,26 @@
+---
+title: "User Report"
+output: 
+  html_document:
+    theme: lumen
+rmd_output_metadata:
+  rsc_output_files:
+    - "user-report.csv"
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r packages, include=FALSE}
+library(rscview)
+library(httr)
+library(xml2)
+library(dplyr)
+library(tidyr)
+library(reactable)
+library(blastula)
+```
+
+```{r check_envvars, include=FALSE}
+check_envvars()
+```
+
