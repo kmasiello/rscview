@@ -1,5 +1,5 @@
 ---
-title: "RStudio Connect Audit Update"
+title: "RSC Content Information"
 output: 
   flexdashboard::flex_dashboard:
     orientation: rows
@@ -14,54 +14,45 @@ library(httr)
 library(xml2)
 library(pins)
 library(reactable)
+library(gt)
+library(omsvg)
 ```
 
 ```{r include=FALSE}
-board_register("rsconnect", server = "https://colorado.rstudio.com/rsc")
+pins::board_register(
+  "rsconnect",
+  server = "https://colorado.rstudio.com/rsc"
+)
 
 # Retrieve Pin
-df_full <- pin_get("katie/rsc_content_list", board = "rsconnect")
-        
-# # Use the /v1/content endpoint to retrieve the full list of content items
-# result <- GET(
-#   paste0(Sys.getenv("CONNECT_SERVER"),"__api__/v1/content"),
-#     add_headers(Authorization = paste("Key", Sys.getenv("CONNECT_API_KEY"))))
-# 
-# # Create a tibble for the content list result response
-# df_full <- unnest_wider(tibble::tibble(dat = content(result)), dat) 
-
-df_full
+df_full <- pins::pin_get("katie/content-info", board = "rsconnect")
 ```
 
 
 ```{r include=FALSE}
 
-# Write the full content list reponse out to a CSV file for download
-write.csv(select(df_full, -git), "rsc-basic-audit.csv", row.names=FALSE)
+# Write the full content list response out to a CSV file for download
+#write.csv(select(df_full, -git), "rsc-basic-audit.csv", row.names=FALSE)
 ```
 
 
-Column {data-width=350}
+Column
 -----------------------------------------------------------------------
 
 ### Chart B
 
 ```{r}
 
-```
-
-- **There are `r nrow(df_full)` content items on the server**
-
-### Chart C
-
-```{r}
-
+SVG(width = 1250, height = 500) %>%
+  svg_rect(x = 25, y = 25, width = 50, height = 50, fill = "yellow") %>%
+  svg_ellipse(x = 125, y = 50, width = 50, height = 50, stroke = "magenta") %>%
+  svg_text(x = 1175, y = 200, text = "this is text", attrs = svg_attrs_pres(font_family = "Helvetica"))
 ```
 
 Column {data-width=650}
 -----------------------------------------------------------------------
 
-### Chart A
+### Full Table of Content Information
 
 ```{r}
 # Filter the full response to select specific fields for viewing
