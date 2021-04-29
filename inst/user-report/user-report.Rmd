@@ -1,26 +1,62 @@
 ---
 title: "User Report"
 output: 
-  html_document:
-    theme: lumen
-rmd_output_metadata:
-  rsc_output_files:
-    - "user-report.csv"
+  flexdashboard::flex_dashboard:
+    orientation: rows
 editor_options: 
   chunk_output_type: console
 ---
 
 ```{r packages, include=FALSE}
 library(rscview)
-library(httr)
-library(xml2)
+library(connectapi)
 library(dplyr)
-library(tidyr)
+library(lubridate)
+library(DT)
 library(reactable)
-library(blastula)
 ```
 
 ```{r check_envvars, include=FALSE}
 check_envvars()
+```
+
+```{r get_users_tbl, include=FALSE}
+conn <- 
+  connectapi::connect(
+    host = Sys.getenv("CONNECT_SERVER"),
+    api_key = Sys.getenv("CONNECT_API_KEY")
+  )
+
+users_tbl <- connectapi::get_users(src = conn, limit = Inf)
+
+today <- lubridate::today()
+
+users_tbl <-
+  users_tbl %>%
+  dplyr::select(-created_time, -updated_time, -confirmed, -guid) %>%
+  dplyr::mutate(days_since_active = as.numeric(today - lubridate::as_date(active_time))) %>%
+  dplyr::mutate(count_as_licensed_named_user = dplyr::case_when(
+    days_since_active < 365 & locked == FALSE ~ TRUE,
+    TRUE ~ FALSE
+  ))
+```
+
+
+<!-- TODO: plot of last-365 new user activations (shows when users were added, spike plot that will be sparse except maybe at the service start) **doable**-->
+<!-- TODO: plot of last-365 number of named users per day; need to have a line showing the user limit for the account **doable**-->
+
+Row
+-----------------------------------------------------------------------
+
+
+
+Row
+-----------------------------------------------------------------------
+
+```{r show_users_tbl, echo=FALSE}
+reactable(
+  users_tbl, searchable = TRUE, highlight = TRUE, resizable = TRUE,
+  filterable = TRUE, width = "100%"
+  )
 ```
 
