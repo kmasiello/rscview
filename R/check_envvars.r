@@ -2,8 +2,6 @@
 #'
 #' @return
 #' @export
-#'
-#' @examples
 
 #KM - I'm not sure if the knit_exit portion needs to be removed yet. Still
 #thinking through how final output as a flexdashboard will affect this.
