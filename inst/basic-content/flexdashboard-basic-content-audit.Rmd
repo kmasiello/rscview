@@ -41,13 +41,6 @@ Column
 
 ### Chart B
 
-```{r}
-
-SVG(width = 1250, height = 500) %>%
-  svg_rect(x = 25, y = 25, width = 50, height = 50, fill = "yellow") %>%
-  svg_ellipse(x = 125, y = 50, width = 50, height = 50, stroke = "magenta") %>%
-  svg_text(x = 1175, y = 200, text = "this is text", attrs = svg_attrs_pres(font_family = "Helvetica"))
-```
 
 Column {data-width=650}
 -----------------------------------------------------------------------
