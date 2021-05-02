@@ -1,0 +1,61 @@
+---
+title: "Group Report"
+output:
+  flexdashboard::flex_dashboard:
+    orientation: rows
+    css: custom.css
+    theme:
+      version: 4
+      fg: "#4C8187"
+      bg: "#fff"
+---
+
+```{r packages, include=FALSE}
+library(rscview)
+library(connectapi)
+library(dplyr)
+library(lubridate)
+library(DT)
+library(reactable)
+```
+
+```{r check_envvars, include=FALSE}
+check_envvars()
+```
+
+```{r get_users_tbl, include=FALSE}
+conn <- 
+  connectapi::connect(
+    host = Sys.getenv("CONNECT_SERVER"),
+    api_key = Sys.getenv("CONNECT_API_KEY")
+  )
+
+groups_tbl <- connectapi::get_groups(src = conn, limit = Inf)
+
+group_mbrs_list <- purrr::map(.x = groups_tbl$guid, ~get_group_members(conn, .x))
+```
+
+Row {data-height=650}
+-----------------------------------------------------------------------
+
+### Chart A
+
+```{r}
+
+```
+
+Row 
+-----------------------------------------------------------------------
+
+### Chart B
+
+```{r}
+
+```
+
+### Chart C
+
+```{r}
+
+```
+
