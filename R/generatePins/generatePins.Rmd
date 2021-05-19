@@ -17,7 +17,7 @@ library(pins)
 check_envvars()
 ```
 
-```{r setup}
+```{r}
 client <- connect(
   host = Sys.getenv("CONNECT_SERVER"),
   api_key = Sys.getenv("CONNECT_API_KEY")
@@ -51,9 +51,11 @@ df_users <- get_users(client, limit = Inf)
 ```{r}
 # Pin the user data in df_users to RStudio Connect
 
-pin_users <- pins::pin(df_users, name = "user-info", description = "Results pulled from `connectapi::get_users()`", board = "rsconnect")
+pins::pin(df_users, name = "user-info", description = "Results pulled from `connectapi::get_users()`", board = "rsconnect")
+my_content <- content_item(client, pins::pin_info("katie/user-info", board = "rsconnect")$guid)
 # tag it
-set_content_tag_tree(pin_users, tag_parent, tag_name)
+set_content_tag_tree(my_content, tag_parent, tag_name)
+# set_content_tags(pin_users, all_tags$`Projects and Presentations`$`Server Audit`)
 ```
 
 ---
@@ -96,7 +98,10 @@ result <- GET(
 content_list <- unnest_wider(tibble::tibble(dat = content(result)), dat)
 
 
-# content_list2 <- get_content(client, limit = Inf)
+# Use connectapi 
+content_tbl <- get_content(client)
+
+
 ```
 
 ```{r}
