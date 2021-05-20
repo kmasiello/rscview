@@ -1,19 +1,26 @@
 ---
 title: "User Report"
-output: 
+output:
   flexdashboard::flex_dashboard:
     orientation: rows
+    css: custom.css
+    theme:
+      version: 4
+      fg: "#4C8187"
+      bg: "#fff"
 editor_options: 
   chunk_output_type: console
 ---
 
 ```{r packages, include=FALSE}
 library(rscview)
+library(flexdashboard)
 library(connectapi)
-library(dplyr)
+library(tidyverse)
 library(lubridate)
-library(DT)
 library(reactable)
+library(ggplot2)
+library(plotly)
 ```
 
 ```{r check_envvars, include=FALSE}
@@ -33,7 +40,6 @@ today <- lubridate::today()
 
 users_tbl <-
   users_tbl %>%
-  dplyr::select(-created_time, -updated_time, -confirmed, -guid) %>%
   dplyr::mutate(days_since_active = as.numeric(today - lubridate::as_date(active_time))) %>%
   dplyr::mutate(count_as_licensed_named_user = dplyr::case_when(
     days_since_active < 365 & locked == FALSE ~ TRUE,
@@ -42,21 +48,191 @@ users_tbl <-
 ```
 
 
+
+```{r}
+prep_users <- users_tbl %>%
+  mutate(
+    active_time = as_date(active_time),
+    days_since = active_time %--% today() / days(),
+    days_range = case_when(
+      days_since <= 7 ~ "1,Last 7 days",
+      days_since <= 14 ~ "2,8 to 14 days",
+      days_since <= 30 ~ "3,15 to 30 days",
+      days_since <= 60 ~ "4,31 to 60 days",
+      days_since <= 90 ~ "5,61 to 90 days",
+      TRUE ~ "6,Over 90 days"
+    )) %>%
+  separate(days_range, c("days_sort", "days_range"), sep = ",") %>%
+  mutate(days_sort = as.numeric(days_sort)) %>% 
+  mutate(count_as_licensed_named_user = dplyr::case_when(
+    days_since < 365 & locked == FALSE ~ TRUE,
+    TRUE ~ FALSE
+    ))  
+
+historical_users <- prep_users
+current_users <- prep_users %>% 
+  filter(count_as_licensed_named_user == TRUE) 
+```  
+
+``` {r current}
+
+users_licensed <- current_users %>% 
+  count() %>% 
+  pull()
+
+users_recent <- current_users %>%
+  filter(active_time >= today() - 30) %>%
+  count() %>%
+  pull()
+
+users_ninety <- current_users %>%
+  filter(active_time >= today() - 90) %>%
+  count() %>%
+  pull()
+
+day_ranges <- current_users %>%
+  count(days_sort, days_range, name = "users") %>%
+  ungroup() %>%
+  mutate(
+    days_sort = as.numeric(days_sort),
+    percent = round(users / sum(users), 2),
+    label = paste0(users, "(", percent * 100 ,"%)")
+    )
+
+#users by roles
+users_admins <- current_users %>% 
+  filter(user_role == "administrator")
+
+users_pubs <- current_users %>% 
+  filter(user_role == "publisher")
+
+users_viewers <- current_users %>% 
+  filter(user_role == "viewer")
+
+  
+```
+
+Things to confirm:
+add in logic for confirmed?  Does confirmed == TRUE need to be set 
+
+
+
+```{r historical}
+# When were users added to the server? Help me understand the trend in adding users. 
+# Note at present this completely ignores users that have been locked.
+# when were users added
+all <- historical_users %>%
+  # filter(!locked) %>% 
+  dplyr::arrange(created_time) %>%
+  mutate(created_time = as_date(created_time)) %>% 
+  mutate(cum_count_day0 = cumsum(confirmed)) 
+
+
+p <- 
+  ggplot(filter(all, created_time > "2020-01-01"), aes(x = created_time, y = cum_count_day0, color = count_as_licensed_named_user)) +
+  geom_line(color = "#0c4c8a") +
+  geom_point(alpha = 0.3) +
+  labs(x = "Date", y = "Cumulative Users", title = "Historical User Additions") +
+  geom_vline(xintercept = today(), linetype = "dashed", color = "gray") +
+  geom_vline(xintercept = today()-years(1)+1, linetype = "dashed", color = "gray") +
+  theme(legend.position="bottom") +
+  geom_point(filter(all, count_as_licensed_named_user == TRUE), aes(x = created_time, y = cum_count_day0))
+
+ggplotly(p)
+
+
+
+last_year <- historical_users %>% 
+  dplyr::arrange(desc(created_time)) %>% 
+  mutate(created_time = as_date(created_time)) %>% 
+  mutate(impact_to_count = case_when(count_as_licensed_named_user == TRUE ~ 1, 
+                                     count_as_licensed_named_user == FALSE ~ -1)) %>% 
+  mutate(temp = cumsum(impact_to_count)) %>% 
+  mutate(named_user_count = 1+ users_licensed - temp)
+
+ggplot(last_year, aes(x = created_time, y = named_user_count)) + 
+  geom_line() + 
+  geom_point()
+```
+
+
+
+
 <!-- TODO: plot of last-365 new user activations (shows when users were added, spike plot that will be sparse except maybe at the service start) **doable**-->
 <!-- TODO: plot of last-365 number of named users per day; need to have a line showing the user limit for the account **doable**-->
 
 Row
 -----------------------------------------------------------------------
-
-
-
-Row
------------------------------------------------------------------------
-
-```{r show_users_tbl, echo=FALSE}
-reactable(
-  users_tbl, searchable = TRUE, highlight = TRUE, resizable = TRUE,
-  filterable = TRUE, width = "100%"
-  )
+### Licensed Named Users
+```{r}
+valueBox(users_licensed)
 ```
 
+### Administrators
+``` {r}
+valueBox(nrow(users_admins))
+```
+
+### Publishers
+``` {r}
+valueBox(nrow(users_pubs))
+```
+
+### Viewers
+``` {r}
+valueBox(nrow(users_viewers))
+```
+
+
+Row{.tabset .tabset-fade}
+-------------------------------------
+   
+### All Named Users
+    
+```{r}
+reactable(
+  filter(current_users), searchable = TRUE, highlight = TRUE, resizable = TRUE,
+  filterable = TRUE, width = "100%"
+  )
+
+```
+ 
+### Administrators
+    
+```{r}
+reactable(
+  filter(current_users, user_role == "administrator"), searchable = TRUE, highlight = TRUE, resizable = TRUE,
+  filterable = TRUE, width = "100%"
+  )
+
+```
+
+### Publishers
+    
+```{r}
+reactable(
+  filter(current_users, user_role == "publisher"), searchable = TRUE, highlight = TRUE, resizable = TRUE,
+  filterable = TRUE, width = "100%"
+  )
+
+```
+
+### Viewers
+    
+```{r}
+reactable(
+  filter(current_users, user_role == "viewer"), searchable = TRUE, highlight = TRUE, resizable = TRUE,
+  filterable = TRUE, width = "100%"
+  )
+
+```
+
+### All Historical Users
+
+```{r}
+reactable(
+  historical_users, searchable = TRUE, highlight = TRUE, resizable = TRUE,
+  filterable = TRUE, width = "100%"
+  )
+```   
+ 

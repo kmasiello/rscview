@@ -8,10 +8,13 @@ output:
       version: 4
       fg: "#4C8187"
       bg: "#fff"
+editor_options: 
+  chunk_output_type: console
 ---
 
 ```{r packages, include=FALSE}
 library(rscview)
+library(flexdashboard)
 library(connectapi)
 library(dplyr)
 library(lubridate)
@@ -33,21 +36,28 @@ conn <-
 groups_tbl <- connectapi::get_groups(src = conn, limit = Inf)
 
 group_mbrs_list <- purrr::map(.x = groups_tbl$guid, ~get_group_members(conn, .x))
+names(group_mbrs_list) <- groups_tbl$name
 ```
 
-Row {data-height=650}
------------------------------------------------------------------------
-
-### Chart A
 
 ```{r}
+group_count <- nrow(groups_tbl)
+```
 
+
+Row 
+-----------------------------------------------------------------------
+
+### Number of Groups
+
+```{r}
+valueBox(group_count)
 ```
 
 Row 
 -----------------------------------------------------------------------
 
-### Chart B
+### Groups
 
 ```{r}
 
