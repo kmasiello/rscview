@@ -2,7 +2,7 @@
 title: "Group Report"
 output:
   flexdashboard::flex_dashboard:
-    orientation: rows
+    orientation: columns
     css: custom.css
     theme:
       version: 4
@@ -16,7 +16,7 @@ editor_options:
 library(rscview)
 library(flexdashboard)
 library(connectapi)
-library(dplyr)
+library(tidyverse)
 library(lubridate)
 library(DT)
 library(reactable)
@@ -35,13 +35,21 @@ conn <-
 
 groups_tbl <- connectapi::get_groups(src = conn, limit = Inf)
 
-group_mbrs_list <- purrr::map(.x = groups_tbl$guid, ~get_group_members(conn, .x))
-names(group_mbrs_list) <- groups_tbl$name
+grp_mbrs_tbl <- groups_tbl %>% transpose() %>% 
+  map_dfr(~get_group_members(conn, .x$guid) %>% mutate(group_name = .x$name)) %>% 
+  select(-created_time, -updated_time, -active_time, -confirmed, -locked, -guid)
+  
+
 ```
 
 
 ```{r}
 group_count <- nrow(groups_tbl)
+```
+
+```{r}
+groups_summary <- grp_mbrs_tbl %>% group_by(group_name) %>% 
+   summarise("Number of Members" = n()) 
 ```
 
 
@@ -54,18 +62,60 @@ Row
 valueBox(group_count)
 ```
 
-Row 
------------------------------------------------------------------------
-
 ### Groups
 
 ```{r}
+gt::gt(groups_summary)
+```
+
+
+Row{.tabset .tabset-fade}
+-------------------------------------
+   
+### Connect Admin
+```{r}
+make_table <- function(x) {
+  reactable(
+  filter(grp_mbrs_tbl, group_name == x), searchable = TRUE, highlight = TRUE,
+  filterable = TRUE, width = "100%"
+  )
+}
+make_table("Connect Admin")
 
 ```
 
-### Chart C
+### Default
+```{r}
+make_table("Default")
+```
 
+### Developer
 ```{r}
 
+make_table("Developer")
+```
+
+### Solutions Engineer
+```{r}
+make_table("Solutions Engineer")
+```
+
+### Staging 
+```{r}
+make_table("Staging")
+```
+
+### Test Role
+```{r}
+make_table("Test Role")
+```
+
+### User to Group info
+```{r}
+#what groups is a user in
+reactable(
+  grp_mbrs_tbl, searchable = TRUE, highlight = TRUE,
+  filterable = TRUE, width = "100%"
+  )
 ```
 
