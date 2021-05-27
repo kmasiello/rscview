@@ -10,10 +10,12 @@ output:
       bg: "#fff"
 editor_options: 
   chunk_output_type: console
+params:
+  username: scott
 ---
 
 ```{r packages, include=FALSE}
-library(rscview)
+# library(rscview)
 library(flexdashboard)
 library(connectapi)
 library(tidyverse)
@@ -23,7 +25,7 @@ library(reactable)
 ```
 
 ```{r check_envvars, include=FALSE}
-check_envvars()
+# check_envvars()
 ```
 
 ```{r get_users_tbl, include=FALSE}
@@ -110,12 +112,14 @@ make_table("Staging")
 make_table("Test Role")
 ```
 
-### User to Group info
+### List of Groups a User is in  
+*Group report for username: `r params$username`*
 ```{r}
 #what groups is a user in
-reactable(
-  grp_mbrs_tbl, searchable = TRUE, highlight = TRUE,
-  filterable = TRUE, width = "100%"
-  )
+
+#this would be better as a shiny object and not a parameterized rmd
+grp_mbrs_tbl %>% filter(username == params$username) %>% 
+  select(group_name, user_role) %>% 
+  reactable(searchable = TRUE, highlight = TRUE)
 ```
 
