@@ -12,6 +12,7 @@ editor_options:
   chunk_output_type: console
 params:
   username: scott
+runtime: shiny
 ---
 
 ```{r packages, include=FALSE}
@@ -113,13 +114,19 @@ make_table("Test Role")
 ```
 
 ### List of Groups a User is in  
-*Group report for username: `r params$username`*
 ```{r}
 #what groups is a user in
+#this is not very elegant. I'm sure it can be jazzed up, but the idea is have an interactive means of finding groups a person is in
+textInput("username", label = h3("Enter username"))
 
-#this would be better as a shiny object and not a parameterized rmd
-grp_mbrs_tbl %>% filter(username == params$username) %>% 
-  select(group_name, user_role) %>% 
-  reactable(searchable = TRUE, highlight = TRUE)
+renderText({ 
+    paste("Assigned groups for username:", input$username)
+  })
+
+renderDataTable(grp_mbrs_tbl %>% filter(username == input$username) %>% 
+  select(group_name, user_role)
+
+)
+
 ```
 
