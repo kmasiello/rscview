@@ -135,14 +135,13 @@ p <-
   labs(x = "Date", y = "Cumulative Users", title = "Historical User Additions") +
   geom_vline(xintercept = today(), linetype = "dashed", color = "gray") +
   geom_vline(xintercept = today()-years(1)+1, linetype = "dashed", color = "gray") +
-  theme(legend.position="bottom") +
-  geom_point(filter(all, count_as_licensed_named_user == TRUE), aes(x = created_time, y = cum_count_day0))
-
-ggplotly(p)
+  theme(legend.position="bottom") 
+# ggplotly(p)
 
 
 
 last_year <- historical_users %>% 
+  filter(!locked) %>% 
   dplyr::arrange(desc(created_time)) %>% 
   mutate(created_time = as_date(created_time)) %>% 
   mutate(impact_to_count = case_when(count_as_licensed_named_user == TRUE ~ 1, 
@@ -150,7 +149,7 @@ last_year <- historical_users %>%
   mutate(temp = cumsum(impact_to_count)) %>% 
   mutate(named_user_count = 1+ users_licensed - temp)
 
-ggplot(last_year, aes(x = created_time, y = named_user_count)) + 
+q <- ggplot(last_year, aes(x = created_time, y = named_user_count)) + 
   geom_line() + 
   geom_point()
 ```
