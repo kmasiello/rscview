@@ -1,0 +1,139 @@
+---
+title: "CHANGE ME RStudio Connect Usage - Last `r as.numeric(Sys.getenv('DAYSBACK', 30))` Days"
+output:
+  flexdashboard::flex_dashboard:
+    orientation: rows
+    css: custom.css
+    theme:
+      version: 4
+      fg: "#4C8187"
+      bg: "#fff"
+editor_options: 
+  chunk_output_type: console
+---
+
+## Katie's notes
+So far as I can tell, audit logs dont contain interesting information about content access. Presumably because audit logs are about server and user actions. Not in accessing content.
+
+
+```{r}
+library(connectapi)
+library(flexdashboard)
+library(tidyverse)
+library(lubridate)
+library(ggplot2)
+```
+
+
+```{r}
+conn <- 
+  connectapi::connect(
+    server = Sys.getenv("CONNECT_SERVER"),
+    api_key = Sys.getenv("CONNECT_API_KEY")
+  )
+
+#get a table with content name and deployment info
+# content <- get_content(conn, limit = Inf)
+content <- read_rds(here::here("inst", "usage-report", "content_2021-06-14.rds"))
+content_info <- content %>% 
+  select(guid, name, title, owner_username, url, app_mode, content_category)
+
+#Notes for future self - from `https://github.com/rstudio/connectapi/blob/002f0a6a0a6d3cf2eadc57f3daf173dd13ca65ff/R/ptype.R#L56`
+#(1=shiny, 2=shiny Rmd, 3=source Rmd, 4=static, 5=api, 6=tensorflow, 7=python, 8=flask, 9=dash, 10=streamlit)
+type_ref <- tibble(app_mode = 1:10, 
+                   description = c("Shiny", 
+                                   "Shiny RMD",
+                                   "Source RMD", 
+                                   "Static", 
+                                   "API", 
+                                   "Tensorflow", 
+                                   "Python", 
+                                   "Flask", 
+                                   "Dash", 
+                                   "Streamlit"))
+```
+
+
+```{r setup, include=FALSE}
+
+days_back <- as.numeric(Sys.getenv("DAYSBACK", 90))
+
+default_content_title <- "Unknown (Deleted Content?)"
+
+report_from <- lubridate::today() - lubridate::ddays(days_back)
+
+
+# shiny <- get_usage_shiny(
+#   conn,
+#   from = report_from,
+#   limit = Inf
+# ) %>%
+#   mutate(
+#     started = lubridate::ymd_hms(started),
+#     ended = lubridate::ymd_hms(ended),
+#     session_duration = ended - started
+#     ) %>%
+#   filter(session_duration > lubridate::dseconds(5))
+shiny <- read_rds(here::here("inst", "usage-report", "shiny_2021-06-14.rds"))
+
+shiny <- shiny %>% select(-ended)
+
+
+# other <- get_usage_static(
+#   conn,
+#   from = report_from,
+#   limit = Inf
+# )
+other <- read_rds(here::here("inst", "usage-report", "static_2021-06-14.rds"))
+
+other <- other %>% select(-variant_key, -rendering_id, -bundle_id) %>% 
+  rename("started" = time)
+
+all_users <- get_users(conn, page_size = 500)
+
+usage_data <-   rbind(shiny, other)
+# readr::write_rds(data, file = here::here("inst","usage-report", "data.rds"))
+```
+
+This content summary may contain privileged information. The report is generated
+using the [RStudio Connect Server API](http://docs.rstudio.com/connect/api) and
+the source code is [available online](https://github.com/sol-eng/connect-usage)
+if you'd like to customize your analysis. Data is limited to the last `r
+days_back` days.
+
+The report uses the environment variables `CONNECT_SERVER` and `CONNECT_API_KEY`
+to collect the data. To limit the results to a single publisher, use a publisher
+API key.
+
+Row 
+-----------------------------------------------------------------------
+What content is most popular?
+```{r}
+days_back <- 90
+summary_usage <- usage_data %>%
+  filter(started > today() - ddays(days_back)) %>% 
+  mutate(month = round_date(started, "month")) %>% 
+  group_by(month, content_guid) %>% 
+  summarise(visits = n()) %>% 
+  left_join(content_info, by = c(content_guid = "guid")) %>% 
+  arrange(desc(visits))
+  
+
+### LEFT OFF HERE MONDAY NIGHT ######
+# Thinking that the static report is really the everything-but-shiny report, so need to check this to see if flask, APIs, etc. are covered here. 
+# Create top N chart of most frequently visited pieces of content. 
+# Also create filter by publisher
+# and summary of number of things published by usernmae
+
+## NEED HELP with this plot -- cant get it in pareto sort and want to filter results
+ggplot(summary_usage, aes(reorder(title, visits), visits)) + 
+     geom_bar(stat = "identity") +  
+     # coord_flip() + 
+     labs(
+       y = "Number of Visits",
+       x = NULL
+     ) + facet_wrap(~as.Date(month), scales = "free")
+
+
+```
+

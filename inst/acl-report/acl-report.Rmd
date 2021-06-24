@@ -13,7 +13,7 @@ editor_options:
 ---
 
 ```{r packages, include=FALSE}
-library(rscview)
+# library(rscview)
 library(flexdashboard)
 library(connectapi)
 library(tidyverse)
@@ -24,13 +24,13 @@ library(gt)
 ```
 
 ```{r check_envvars, include=FALSE}
-check_envvars()
+# check_envvars()
 ```
 
 ```{r get_users_tbl, include=FALSE}
 conn <- 
   connectapi::connect(
-    host = Sys.getenv("CONNECT_SERVER"),
+    server = Sys.getenv("CONNECT_SERVER"),
     api_key = Sys.getenv("CONNECT_API_KEY")
   )
 

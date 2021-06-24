@@ -34,7 +34,7 @@ user_count <- logs %>%
  unique() %>% 
  nrow()
 
-events <- logs %>% group_by(action) %>% tally()
+events <- logs %>% group_by(action) %>% tally() %>% View()
 logs %>% filter(grepl('lock', action)) %>% filter(grepl('Donna', event_description)) %>% View()
 logs %>% filter(grepl('donna', user_description)) %>% View()
 logs %>% filter(grepl('Updated lock for user ', event_description)) %>% View()
