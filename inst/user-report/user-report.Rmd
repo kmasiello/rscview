@@ -36,14 +36,15 @@ conn <-
 
 
 # logs <- get_audit_logs(conn, limit = Inf)
-logs <- read_rds(here::here("inst", "user-report", "logs_2021-06-03.rds"))
+logs <- read_rds(here::here("inst", "user-report", "logs_2021-07-02.rds"))
 
-users_tbl <- connectapi::get_users(src = conn, limit = Inf)
+users_tbl_raw <- connectapi::get_users(src = conn, limit = Inf)
 
 
 users_tbl <-
-  users_tbl %>%
+  users_tbl_raw %>%
   filter(confirmed == TRUE) %>% 
+  filter(!is.na(active_time)) %>% 
   mutate(days_since_active = as.numeric(today() - as_date(active_time))) %>%
   mutate(count_as_licensed_named_user = dplyr::case_when(
     as_date(active_time) >= (today() - dyears(1)) & locked == FALSE ~ TRUE, 
@@ -216,8 +217,42 @@ plot_historical <- ggplot(add_history, aes(x = event_time, y = user_add_num, col
   labs(x = "Date", y = "Number of Users Added to Server", title = "Historical User Additions") +
   theme(legend.position="bottom") 
 
+# Additions by role
+history_role <- add_history %>% left_join(select(users_tbl, username, user_role), by = "username")
 
+plot_role <- ggplot(history_role, aes(x = event_time, y = user_add_num, color = active_in_last_year)) +
+  facet_grid(. ~ user_role) +
+  geom_step(color = "#4C8187") +
+  geom_point(alpha = 0.3) +
+  labs(x = "Date", y = "Number of Users Added to Server", title = "Historical User Additions") +
+  theme(legend.position="bottom")
 ```
+
+```{r}
+#User locking frequency
+lock_history <- event_history %>% select(username, event_date, event) %>% 
+  filter(event == "locked" | event == "unlocked") %>% 
+  group_by(username) %>%
+  mutate(multiple_events = case_when(
+    n() > 1 ~ TRUE, 
+    TRUE ~ FALSE)) %>% 
+  mutate(subsequently_unlocked = case_when(
+    multiple_events == FALSE ~ FALSE,
+    multiple_events == TRUE & event == "locked" & lead(event, 1) == "unlocked" ~ TRUE,
+    multiple_events == TRUE & event == "locked" & is.na(lead(event, 1)) ~ FALSE )) %>% 
+  filter(event == "locked") %>% select(-multiple_events, -event) %>% 
+  ungroup() %>% 
+  rename("Lock Date" = event_date, "Subsequently Unlocked" = subsequently_unlocked)
+
+# # User Lock Events
+# reactable(lock_history, rowStyle = function(index){
+#   if(lock_history[index, "Subsequently Unlocked"] == TRUE){
+#     list(color = "red")
+#   }
+# }
+# )
+```
+
 
 ```{r}
 # User profile information
@@ -225,9 +260,6 @@ plot_historical <- ggplot(add_history, aes(x = event_time, y = user_add_num, col
 # How many users are active in the last 3 mo, 6 mo, 9 mo, and what fraction of users added phase out? <- this last one can get skewed - if people leave the co, interns, etc. its not that they phased out due to lack of interest.  I am uncertain about building these elements out.  leads people to assume activity level equates to value
 ```
 
-
-<!-- TODO: plot of last-365 new user activations (shows when users were added, spike plot that will be sparse except maybe at the service start) **doable**-->
-<!-- TODO: plot of last-365 number of named users per day; need to have a line showing the user limit for the account **doable**-->
 
 Row
 -----------------------------------------------------------------------
@@ -258,6 +290,12 @@ Row{.tabset .tabset-fade}
 ```{r}
 plot_historical
 ```
+
+### Historical Users by Role
+```{r}
+plot_role
+```
+
 
 ### Named User History
 ```{r}
@@ -316,4 +354,15 @@ reactable(
   filterable = TRUE, width = "100%"
   )
 ```   
- 
+
+### User Lock Frequency
+```{r}
+# User Lock Events
+reactable(lock_history, rowStyle = function(index){
+  if(lock_history[index, "Subsequently Unlocked"] == TRUE){
+    list(color = "red")
+  }
+})
+# refer to RStudio EULA and Software License Descriptions. Under RStudio Connect's Named User license, you may permanently terminate (lock) a Named User's use of the Software and assign the Named User's license to a new Named User. For example, if a Named User ceases to use the Software or ceases to be employed by you, you may re-assign their Named User License to a new Named User. Locking is intended to be a permanent action.
+```
+
