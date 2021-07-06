@@ -120,13 +120,20 @@ make_table("Test Role")
 textInput("username", label = h3("Enter username"))
 
 renderText({ 
-    paste("Assigned groups for username:", input$username)
+    paste("Scroll waaay down to see result for username:", input$username)
   })
 
-renderDataTable(grp_mbrs_tbl %>% filter(username == input$username) %>% 
+renderTable({
+  filter(grp_mbrs_tbl, username == input$username) %>%
   select(group_name, user_role)
+})
 
-)
+#For some reason, this wont run by itself but if it and renderTable are active, both will run. 
+# renderDataTable({
+#   filter(grp_mbrs_tbl, username == input$username) %>%
+#   select(group_name, user_role)
+#   
+#   })
 
 ```
 
