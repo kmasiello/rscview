@@ -2,25 +2,31 @@
 title: "Group Report"
 output:
   flexdashboard::flex_dashboard:
-    orientation: rows
+    orientation: columns
     css: custom.css
     theme:
       version: 4
       fg: "#4C8187"
       bg: "#fff"
+editor_options: 
+  chunk_output_type: console
+params:
+  username: scott
+runtime: shiny
 ---
 
 ```{r packages, include=FALSE}
-library(rscview)
+# library(rscview)
+library(flexdashboard)
 library(connectapi)
-library(dplyr)
+library(tidyverse)
 library(lubridate)
 library(DT)
 library(reactable)
 ```
 
 ```{r check_envvars, include=FALSE}
-check_envvars()
+# check_envvars()
 ```
 
 ```{r get_users_tbl, include=FALSE}
@@ -32,30 +38,102 @@ conn <-
 
 groups_tbl <- connectapi::get_groups(src = conn, limit = Inf)
 
-group_mbrs_list <- purrr::map(.x = groups_tbl$guid, ~get_group_members(conn, .x))
+grp_mbrs_tbl <- groups_tbl %>% transpose() %>% 
+  map_dfr(~get_group_members(conn, .x$guid) %>% mutate(group_name = .x$name)) %>% 
+  select(-created_time, -updated_time, -active_time, -confirmed, -locked, -guid)
+  
+
 ```
 
-Row {data-height=650}
------------------------------------------------------------------------
-
-### Chart A
 
 ```{r}
-
+group_count <- nrow(groups_tbl)
 ```
+
+```{r}
+groups_summary <- grp_mbrs_tbl %>% group_by(group_name) %>% 
+   summarise("Number of Members" = n()) 
+```
+
 
 Row 
 -----------------------------------------------------------------------
 
-### Chart B
+### Number of Groups
 
 ```{r}
+valueBox(group_count)
+```
+
+### Groups
+
+```{r}
+gt::gt(groups_summary)
+```
+
+
+Row{.tabset .tabset-fade}
+-------------------------------------
+   
+### Connect Admin
+```{r}
+make_table <- function(x) {
+  reactable(
+  filter(grp_mbrs_tbl, group_name == x), searchable = TRUE, highlight = TRUE,
+  filterable = TRUE, width = "100%"
+  )
+}
+make_table("Connect Admin")
 
 ```
 
-### Chart C
-
+### Default
 ```{r}
+make_table("Default")
+```
+
+### Developer
+```{r}
+
+make_table("Developer")
+```
+
+### Solutions Engineer
+```{r}
+make_table("Solutions Engineer")
+```
+
+### Staging 
+```{r}
+make_table("Staging")
+```
+
+### Test Role
+```{r}
+make_table("Test Role")
+```
+
+### List of Groups a User is in  
+```{r}
+#what groups is a user in
+#this is not very elegant. I'm sure it can be jazzed up, but the idea is have an interactive means of finding groups a person is in
+textInput("username", label = h3("Enter username"))
+
+renderText({ 
+    paste("Scroll waaay down to see result for username:", input$username)
+  })
+
+renderTable({
+  filter(grp_mbrs_tbl, username == input$username) %>%
+  select(group_name, user_role)
+})
+
+#For some reason, this wont run by itself but if it and renderTable are active, both will run. 
+# renderDataTable({
+#   filter(grp_mbrs_tbl, username == input$username) %>%
+#   select(group_name, user_role)
+#   
+#   })
 
 ```
 

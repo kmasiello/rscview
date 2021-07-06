@@ -1,8 +1,13 @@
 ---
 title: "RSC Content Information"
-output: 
+output:
   flexdashboard::flex_dashboard:
-    orientation: rows
+    orientation: columns
+    css: custom.css
+    theme:
+      version: 4
+      fg: "#4C8187"
+      bg: "#fff"
 editor_options: 
   chunk_output_type: console
 ---
@@ -15,7 +20,6 @@ library(xml2)
 library(pins)
 library(reactable)
 library(gt)
-library(omsvg)
 ```
 
 ```{r include=FALSE}

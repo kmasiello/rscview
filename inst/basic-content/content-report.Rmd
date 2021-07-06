@@ -1,0 +1,88 @@
+---
+title: "Content Information"
+output:
+  flexdashboard::flex_dashboard:
+    orientation: rows
+    css: custom.css
+    theme:
+      version: 4
+      fg: "#4C8187"
+      bg: "#fff"
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r package-load, include=FALSE}
+library(flexdashboard)
+library(connectapi)
+library(tidyverse)
+library(reactable)
+library(gt)
+library(sunburstR)
+```
+
+```{r}
+conn <- 
+  connectapi::connect(
+    host = Sys.getenv("CONNECT_SERVER"),
+    api_key = Sys.getenv("CONNECT_API_KEY")
+  )
+
+#get a table with content name and deployment info
+# content <- get_content(conn, limit = Inf)
+content <- read_rds(here::here("inst", "usage-report", "content_2021-06-14.rds"))
+```
+
+
+
+Column
+-----------------------------------------------------------------------
+
+### Chart B
+
+
+Column {data-width=650}
+-----------------------------------------------------------------------
+
+### Full Table of Content Information
+
+```{r}
+# Filter the full response to select specific fields for viewing
+df_view <- content %>%
+  select(name, title, -owner_guid, app_mode, access_type, r_version, py_version, created_time, last_deployed_time, owner_username) %>%
+  relocate(owner_username, .after = title)
+
+
+# Use reactable to create a nicely formatted table
+reactable(df_view, searchable = TRUE, highlight = TRUE, resizable = TRUE,
+  filterable = TRUE, columns = list(
+  name = colDef(name = "Name"),
+  title = colDef(name = "Title"),
+  owner_username = colDef(name = "Username"),
+  app_mode = colDef(name = "Type"),
+  access_type = colDef(name = "Access Level"),
+  r_version = colDef(name = "R Version"),
+  py_version = colDef(name = "Python Version"),
+  created_time = colDef(name = "Created", format = colFormat(datetime = TRUE)),
+  last_deployed_time = colDef(name = "Last Deployed", format = colFormat(datetime = TRUE))
+))
+```
+
+```{r}
+#Notes for future self - from `https://github.com/rstudio/connectapi/blob/002f0a6a0a6d3cf2eadc57f3daf173dd13ca65ff/R/ptype.R#L56`
+#(1=shiny, 2=shiny Rmd, 3=source Rmd, 4=static, 5=api, 6=tensorflow, 7=python, 8=flask, 9=dash, 10=streamlit)
+
+type_ref <- tibble(app_mode = 1:10, 
+                   description = c("Shiny", 
+                                   "Shiny RMD",
+                                   "Source RMD", 
+                                   "Static", 
+                                   "API", 
+                                   "Tensorflow", 
+                                   "Python", 
+                                   "Flask", 
+                                   "Dash", 
+                                   "Streamlit"))
+
+```
+

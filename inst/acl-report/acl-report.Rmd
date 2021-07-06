@@ -1,0 +1,56 @@
+---
+title: "ACL Report"
+output:
+  flexdashboard::flex_dashboard:
+    orientation: columns
+    css: custom.css
+    theme:
+      version: 4
+      fg: "#4C8187"
+      bg: "#fff"
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r packages, include=FALSE}
+# library(rscview)
+library(flexdashboard)
+library(connectapi)
+library(tidyverse)
+library(lubridate)
+library(DT)
+library(reactable)
+library(gt)
+```
+
+```{r check_envvars, include=FALSE}
+# check_envvars()
+```
+
+```{r get_users_tbl, include=FALSE}
+conn <- 
+  connectapi::connect(
+    server = Sys.getenv("CONNECT_SERVER"),
+    api_key = Sys.getenv("CONNECT_API_KEY")
+  )
+
+content_tbl <- connectapi::get_content(src = conn, limit = Inf)
+
+```
+
+```{r}
+df <- content_tbl %>%
+  select(guid, name, title, access_type, created_time, last_deployed_time)
+
+df %>% count(access_type, sort = TRUE) %>%
+  gt() %>%
+  tab_header(
+    title = "Sharing Settings",
+    subtitle = "RStudio Connect Server Content Audit"
+  ) %>%
+  cols_label(
+    access_type = "Access Type",
+    n = "Count"
+  )
+```
+

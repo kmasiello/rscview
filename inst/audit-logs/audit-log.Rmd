@@ -1,0 +1,58 @@
+---
+title: "Untitled"
+author: "Katie Masiello"
+date: "5/25/2021"
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(connectapi)
+library(tidyverse)
+library(pins)
+```
+
+
+```{r}
+conn <- 
+  connectapi::connect(
+    host = Sys.getenv("CONNECT_SERVER"),
+    api_key = Sys.getenv("CONNECT_API_KEY")
+  )
+
+# logs <- get_audit_logs(conn, limit = Inf)
+logs <- read_rds(here::here("inst", "user-report", "logs.rds"))
+```
+
+```{r}
+user_count <- logs %>% 
+ filter(action == "user_login", 
+ time >= today() - dyears(1)) %>% 
+ select("user_id") %>% 
+ unique() %>% 
+ nrow()
+
+events <- logs %>% group_by(action) %>% tally() %>% View()
+logs %>% filter(grepl('lock', action)) %>% filter(grepl('Donna', event_description)) %>% View()
+logs %>% filter(grepl('donna', user_description)) %>% View()
+logs %>% filter(grepl('Updated lock for user ', event_description)) %>% View()
+logs %>% filter(grepl('user', action)) %>% group_by(action) %>% tally()
+logs %>% filter(action == "add_user") %>% View()
+logs %>% filter(grepl('Hadley', event_description)) %>% View()
+logs %>% filter(grepl('hadley', event_description)) %>% View()
+```
+
+```{r}
+# filter audit logs for locking activities
+lock_history <- logs %>% filter(action == "update_lock_user") %>% 
+  select(time, event_description) %>% 
+  separate(event_description, into = c(NA, "user_w_lock_state"), sep = "Updated lock for user") %>% 
+  dplyr::mutate("user_w_lock_state" = str_trim(user_w_lock_state)) %>% 
+  separate(user_w_lock_state, into = c("user", "lock_state"), sep = ": ") %>% 
+  separate(user, into = c(NA, "user", NA), sep = "[\\(\\)]")
+
+
+```
+
