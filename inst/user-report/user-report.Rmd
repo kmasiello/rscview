@@ -21,62 +21,27 @@ library(lubridate)
 library(reactable)
 library(ggplot2)
 library(ggiraph)
+
 ```
 
 ```{r check_envvars, include=FALSE}
-# check_envvars()
+check_envvars()
 ```
 
-```{r get_users_tbl, include=FALSE}
-conn <- 
-  connectapi::connect(
-    server = Sys.getenv("CONNECT_SERVER"),
-    api_key = Sys.getenv("CONNECT_API_KEY")
-  )
-
+```{r get_users_and_logs, include=FALSE}
+conn <- create_connection()
 
 # logs <- get_audit_logs(conn, limit = Inf)
 logs <- read_rds(here::here("inst", "user-report", "logs_2021-07-02.rds"))
 
-users_tbl_raw <- connectapi::get_users(src = conn, limit = Inf)
+historical_users <- get_user_historical_tbl()
 
-
-users_tbl <-
-  users_tbl_raw %>%
-  filter(confirmed == TRUE) %>% 
-  filter(!is.na(active_time)) %>% 
-  mutate(days_since_active = as.numeric(today() - as_date(active_time))) %>%
-  mutate(count_as_licensed_named_user = dplyr::case_when(
-    as_date(active_time) >= (today() - dyears(1)) & locked == FALSE ~ TRUE, 
-    TRUE ~ FALSE
-  ))
-# Could also accomplish the count_as_licensed_user feat by the endpoint and parameter 
 ```
 
 
 ```{r}
-prep_users <- users_tbl %>%
-  mutate(
-    active_time = as_date(active_time),
-    days_since = active_time %--% today() / days(),
-    days_range = case_when(
-      days_since <= 7 ~ "1,Last 7 days",
-      days_since <= 14 ~ "2,8 to 14 days",
-      days_since <= 30 ~ "3,15 to 30 days",
-      days_since <= 60 ~ "4,31 to 60 days",
-      days_since <= 90 ~ "5,61 to 90 days",
-      TRUE ~ "6,Over 90 days")) %>%
-  separate(days_range, c("days_sort", "days_range"), sep = ",") %>%
-  mutate(days_sort = as.numeric(days_sort)) %>% 
-  mutate(count_as_licensed_named_user = dplyr::case_when(
-    as_date(active_time) >= (today() - dyears(1)) & locked == FALSE ~ TRUE,
-    TRUE ~ FALSE
-    ))  
 
-historical_users <- prep_users
-
-current_users <- prep_users %>% 
-  filter(count_as_licensed_named_user == TRUE) 
+current_users <- get_user_current_tbl() 
 ```  
 
 ``` {r current}
@@ -84,13 +49,12 @@ users_licensed <- current_users %>%
   count() %>% 
   pull()
 
-users_recent <- current_users %>%
-  filter(active_time >= today() - 30) %>%
+users_recent <- current_users %>% get_users_daysback(30) %>%
   count() %>%
   pull()
 
 users_ninety <- current_users %>%
-  filter(active_time >= today() - 90) %>%
+  get_users_daysback(90) %>%
   count() %>%
   pull()
 
@@ -218,7 +182,7 @@ plot_historical <- ggplot(add_history, aes(x = event_time, y = user_add_num, col
   theme(legend.position="bottom") 
 
 # Additions by role
-history_role <- add_history %>% left_join(select(users_tbl, username, user_role), by = "username")
+history_role <- add_history %>% left_join(select(historical_users, username, user_role), by = "username")
 
 plot_role <- ggplot(history_role, aes(x = event_time, y = user_add_num, color = active_in_last_year)) +
   facet_grid(. ~ user_role) +
@@ -244,13 +208,9 @@ lock_history <- event_history %>% select(username, event_date, event) %>%
   ungroup() %>% 
   rename("Lock Date" = event_date, "Subsequently Unlocked" = subsequently_unlocked)
 
-# # User Lock Events
-# reactable(lock_history, rowStyle = function(index){
-#   if(lock_history[index, "Subsequently Unlocked"] == TRUE){
-#     list(color = "red")
-#   }
-# }
-# )
+# We want total number of locking events in time period and number of unlock events. 
+total_locks <- event_history %>% filter(event == "locked") %>% tally() %>% pull()
+total_unlocks <- event_history %>% filter(event == "unlocked") %>% tally() %>% pull()
 ```
 
 
@@ -281,6 +241,17 @@ valueBox(nrow(users_pubs))
 ### Viewers
 ``` {r}
 valueBox(nrow(users_viewers))
+```
+
+### Total Locks
+```{r}
+valueBox(total_locks)
+```
+
+### Total Unlocks
+```{r}
+valueBox(total_unlocks, caption = "See EULA") # Edgar - conditional format if unlocks are > (nominal value). 
+
 ```
 
 Row{.tabset .tabset-fade}
@@ -355,7 +326,9 @@ reactable(
   )
 ```   
 
-### User Lock Frequency
+
+
+### User Lock Frequency Details
 ```{r}
 # User Lock Events
 reactable(lock_history, rowStyle = function(index){
@@ -365,4 +338,3 @@ reactable(lock_history, rowStyle = function(index){
 })
 # refer to RStudio EULA and Software License Descriptions. Under RStudio Connect's Named User license, you may permanently terminate (lock) a Named User's use of the Software and assign the Named User's license to a new Named User. For example, if a Named User ceases to use the Software or ceases to be employed by you, you may re-assign their Named User License to a new Named User. Locking is intended to be a permanent action.
 ```
-
