@@ -2,7 +2,6 @@ Type: Package
 Package: rscview
 Title: Create Admin Dashboards for Connect 
 Version: 0.0.0.9000
-Title: Generate user and content reporting from RSC 
 Description: What the package does (one paragraph).
 Authors@R: c(
     person(given = "Katie",
@@ -34,4 +33,5 @@ Imports:
     dplyr (>= 1.0.5),
     tidyr (>= 1.1.2),
     blastula (>= 0.3.2),
-    reactable (>= 0.2.3)
+    reactable (>= 0.2.3),
+    purrr (>= 0.3.4)
