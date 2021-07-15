@@ -26,19 +26,14 @@ library(reactable)
 ```
 
 ```{r check_envvars, include=FALSE}
-# check_envvars()
+check_envvars()
 ```
 
-```{r get_users_tbl, include=FALSE}
+```{r get_groups_tbl, include=FALSE}
+
 conn <- create_connection()
 
-
-groups_tbl <- connectapi::get_groups(src = conn, limit = Inf)
-
-grp_mbrs_tbl <- groups_tbl %>% transpose() %>% 
-  map_dfr(~get_group_members(conn, .x$guid) %>% mutate(group_name = .x$name)) %>% 
-  select(-created_time, -updated_time, -active_time, -confirmed, -locked, -guid)
-  
+groups_tbl <- get_groups_tbl(conn = conn)
 
 ```
 
@@ -48,7 +43,7 @@ group_count <- nrow(groups_tbl)
 ```
 
 ```{r}
-groups_summary <- grp_mbrs_tbl %>% group_by(group_name) %>% 
+groups_summary <- groups_tbl %>% group_by(group_name) %>% 
    summarise("Number of Members" = n()) 
 ```
 
@@ -76,7 +71,7 @@ Row{.tabset .tabset-fade}
 ```{r}
 make_table <- function(x) {
   reactable(
-  filter(grp_mbrs_tbl, group_name == x), searchable = TRUE, highlight = TRUE,
+  filter(groups_tbl, group_name == x), searchable = TRUE, highlight = TRUE,
   filterable = TRUE, width = "100%"
   )
 }
@@ -121,13 +116,13 @@ renderText({
   })
 
 renderTable({
-  filter(grp_mbrs_tbl, username == input$username) %>%
+  filter(groups_tbl, username == input$username) %>%
   select(group_name, user_role)
 })
 
 #For some reason, this wont run by itself but if it and renderTable are active, both will run. 
 # renderDataTable({
-#   filter(grp_mbrs_tbl, username == input$username) %>%
+#   filter(groups_tbl, username == input$username) %>%
 #   select(group_name, user_role)
 #   
 #   })
