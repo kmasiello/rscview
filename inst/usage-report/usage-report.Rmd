@@ -22,6 +22,7 @@ library(flexdashboard)
 library(tidyverse)
 library(lubridate)
 library(ggplot2)
+#source("*.R")
 ```
 
 
@@ -41,7 +42,7 @@ content_info <- content %>%
 #Notes for future self - from `https://github.com/rstudio/connectapi/blob/002f0a6a0a6d3cf2eadc57f3daf173dd13ca65ff/R/ptype.R#L56`
 #(1=shiny, 2=shiny Rmd, 3=source Rmd, 4=static, 5=api, 6=tensorflow, 7=python, 8=flask, 9=dash, 10=streamlit)
 type_ref <- tibble(app_mode = 1:10, 
-                   description = c("Shiny", 
+                   content_type = c("Shiny", 
                                    "Shiny RMD",
                                    "Source RMD", 
                                    "Static", 
@@ -51,6 +52,8 @@ type_ref <- tibble(app_mode = 1:10,
                                    "Flask", 
                                    "Dash", 
                                    "Streamlit"))
+
+content_info <- content_info %>% left_join(type_ref, by = "app_mode")
 ```
 
 
@@ -74,9 +77,9 @@ report_from <- lubridate::today() - lubridate::ddays(days_back)
 #     session_duration = ended - started
 #     ) %>%
 #   filter(session_duration > lubridate::dseconds(5))
-shiny <- read_rds(here::here("inst", "usage-report", "shiny_2021-06-14.rds"))
+shiny_raw <- read_rds(here::here("inst", "usage-report", "shiny_2021-06-14.rds"))
 
-shiny <- shiny %>% select(-ended)
+shiny <- shiny_raw %>% select(-ended)
 
 
 # other <- get_usage_static(
@@ -84,9 +87,9 @@ shiny <- shiny %>% select(-ended)
 #   from = report_from,
 #   limit = Inf
 # )
-other <- read_rds(here::here("inst", "usage-report", "static_2021-06-14.rds"))
+other_raw <- read_rds(here::here("inst", "usage-report", "static_2021-06-14.rds"))
 
-other <- other %>% select(-variant_key, -rendering_id, -bundle_id) %>% 
+other <- other_raw %>% select(-variant_key, -rendering_id, -bundle_id) %>% 
   rename("started" = time)
 
 all_users <- get_users(conn, page_size = 500)

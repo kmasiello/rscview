@@ -1,0 +1,41 @@
+---
+title: "Pin Content List for Audit Report"
+output: html_document
+---
+
+```{r packages, include=FALSE}
+library(rscview)
+
+```
+
+
+```{r check_envvars, include=FALSE}
+check_envvars()
+```
+
+List all content items visible to the requesting user.
+
+Authenticated access from a user is required. If an "administrator" role is used, then all content items will be returned regardless of the visibility to the requesting user.
+
+## Pull Content list
+
+```{r get_content}
+start_time <- Sys.time()
+content_list <- get_content_tbl() 
+end_time <- Sys.time()
+duration <- end_time - start_time
+```
+
+Info: `get_content_tbl` took `r paste(round(duration[[1]], 2),  units(duration))` to run.
+
+## Pin Content List to RStudio Connect
+```{r pin_it}
+create_pin(content_list, description = "Results pulled via `connectapi` for audit reports")
+```
+
+```{r}
+# TO DO: add a create_tag to collect all the pins and dashboards
+
+# TO DO: add in a set_schedule command
+```
+

@@ -1,19 +1,24 @@
 Type: Package
 Package: rscview
+Title: Create Admin Dashboards for Connect 
 Version: 0.0.0.9000
 Title: Generate user and content reporting from RSC 
 Description: What the package does (one paragraph).
 Authors@R: c(
     person(given = "Katie",
            family = "Masiello",
-           role = c("aut"),
+           role = c("aut", "cre"),
            email = "katie.masiello@rstudio.com",
            comment = c(ORCID = "0000-0002-6155-0909")),
     person(given = "Richard", 
            family ="Iannone", 
-           role = c("aut", "cre"),
+           role = c("aut"),
            email = "rich@rstudio.com",
-           comment = c(ORCID = "0000-0003-3925-190X"))
+           comment = c(ORCID = "0000-0003-3925-190X")),
+    person(given = "Edgar",
+           family = "Ruiz",
+           role = c("aut"),
+           email = "edgar@rstudio.com")
            )
 License: MIT + file LICENSE
 Encoding: UTF-8
