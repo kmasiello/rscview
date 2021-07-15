@@ -1,6 +1,9 @@
+Type: Package
 Package: rscview
 Title: Create Admin Dashboards for Connect 
 Version: 0.0.0.9000
+Title: Generate user and content reporting from RSC 
+Description: What the package does (one paragraph).
 Authors@R: c(
     person(given = "Katie",
            family = "Masiello",
@@ -15,15 +18,15 @@ Authors@R: c(
     person(given = "Edgar",
            family = "Ruiz",
            role = c("aut"),
-           email = "edgar@rstudio.com"
-           ))
-Description: What the package does (one paragraph).
-License: `use_mit_license()`, `use_gpl3_license()` or friends to pick a
-    license
+           email = "edgar@rstudio.com")
+           )
+License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.1.1
+Depends: 
+    R (>= 3.5.0)
 Imports: 
     connectapi (>= 0.1.0),
     httr (>= 1.4.2),
