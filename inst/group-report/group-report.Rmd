@@ -30,11 +30,8 @@ library(reactable)
 ```
 
 ```{r get_users_tbl, include=FALSE}
-conn <- 
-  connectapi::connect(
-    host = Sys.getenv("CONNECT_SERVER"),
-    api_key = Sys.getenv("CONNECT_API_KEY")
-  )
+conn <- create_connection()
+
 
 groups_tbl <- connectapi::get_groups(src = conn, limit = Inf)
 
