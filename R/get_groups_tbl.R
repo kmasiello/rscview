@@ -1,0 +1,23 @@
+#' Get the Groups Table via Connect API
+#'
+#' @param conn the Connect server connection details containing the server and
+#'   API key
+#'
+#' @return a tibble
+#'
+#' @export
+get_groups_tbl <- function(conn = create_connection()) {
+
+  groups_tbl_raw <- connectapi::get_groups(src = conn, limit = Inf)
+
+  groups_tbl_raw %>%
+    purrr::transpose() %>%
+    purrr::map_dfr(
+      ~ connectapi::get_group_members(src = conn, guid = .x$guid) %>%
+        dplyr::mutate(group_name = .x$name)
+      ) %>%
+    dplyr::select(
+      -created_time, -updated_time, -active_time,
+      -confirmed, -locked, -guid
+    )
+}
