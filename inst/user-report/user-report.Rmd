@@ -69,13 +69,13 @@ day_ranges <- current_users %>%
 
 #users by roles
 users_admins <- current_users %>% 
-  filter(user_role == "administrator")
+  get_users_role("administrator") 
 
 users_pubs <- current_users %>% 
-  filter(user_role == "publisher")
+  get_users_role("publisher") 
 
 users_viewers <- current_users %>% 
-  filter(user_role == "viewer")
+  get_users_role("viewer") 
 
   
 ```
@@ -86,16 +86,7 @@ users_viewers <- current_users %>%
 # When were users added to the server? Help me understand the trend in adding users. 
 
 # filter audit logs for locking activities
-lock_history <- logs %>% filter(action == "update_lock_user") %>% 
-  select(time, event_description) %>% 
-  separate(event_description, into = c(NA, "user_w_lock_state"), sep = "Updated lock for user") %>% 
-  dplyr::mutate("user_w_lock_state" = str_trim(user_w_lock_state)) %>% 
-  separate(user_w_lock_state, into = c("user", "lock_state"), sep = ": ") %>% 
-  separate(user, into = c(NA, "username", NA), sep = "[\\(\\)]") %>% 
-  mutate(event = case_when(lock_state == "true" ~ "locked", 
-                           lock_state == "false" ~ "unlocked")) %>% 
-  select(-lock_state) %>% 
-  rename("event_time" = time)
+lock_history <- logs %>% get_lock_history_tbl()
 
 # user creation history -- I'm doing this from the get_user dataframe and not from the audit logs because the audit logs can show user creation under the events of "add_user" or "add_group_member" depending on the auth mechanism. Colorado has this split in the data in how users are added.  
 creation_history <- historical_users %>% 
@@ -220,7 +211,7 @@ total_unlocks <- event_history %>% filter(event == "unlocked") %>% tally() %>% p
 # How many users are active in the last 3 mo, 6 mo, 9 mo, and what fraction of users added phase out? <- this last one can get skewed - if people leave the co, interns, etc. its not that they phased out due to lack of interest.  I am uncertain about building these elements out.  leads people to assume activity level equates to value
 ```
 
-
+# User Counts
 Row
 -----------------------------------------------------------------------
 ### Licensed Named Users
@@ -241,17 +232,6 @@ valueBox(nrow(users_pubs))
 ### Viewers
 ``` {r}
 valueBox(nrow(users_viewers))
-```
-
-### Total Locks
-```{r}
-valueBox(total_locks)
-```
-
-### Total Unlocks
-```{r}
-valueBox(total_unlocks, caption = "See EULA") # Edgar - conditional format if unlocks are > (nominal value). 
-
 ```
 
 Row{.tabset .tabset-fade}
@@ -326,7 +306,24 @@ reactable(
   )
 ```   
 
+# User Management
 
+Row
+-------------------------------------
+### Total Locks
+```{r}
+valueBox(total_locks)
+```
+
+### Total Unlocks
+```{r}
+valueBox(total_unlocks, caption = "See EULA") # Edgar - conditional format if unlocks are > (nominal value). 
+
+```
+
+
+Row
+-------------------------------------
 
 ### User Lock Frequency Details
 ```{r}
