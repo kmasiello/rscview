@@ -16,7 +16,7 @@ runtime: shiny
 ---
 
 ```{r packages, include=FALSE}
-# library(rscview)
+library(rscview)
 library(flexdashboard)
 library(connectapi)
 library(tidyverse)
