@@ -29,20 +29,11 @@ library(reactable)
 check_envvars()
 ```
 
-```{r get_groups_tbl, include=FALSE}
+```{r get_data, include=FALSE}
 
 conn <- create_connection()
-
 groups_tbl <- get_groups_tbl(conn = conn)
-
-```
-
-
-```{r}
 group_count <- nrow(groups_tbl)
-```
-
-```{r}
 groups_summary <- get_groups_summary(groups_tbl = groups_tbl)
 ```
 
