@@ -34,4 +34,5 @@ Imports:
     tidyr (>= 1.1.2),
     blastula (>= 0.3.2),
     reactable (>= 0.2.3),
-    purrr (>= 0.3.4)
+    purrr (>= 0.3.4),
+    magrittr
