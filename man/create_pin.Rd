@@ -17,9 +17,6 @@ create_pin(
 
 \item{key}{Administrator API key}
 }
-\value{
-
-}
 \description{
 Create pin on Connect
 }
