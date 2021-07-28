@@ -5,6 +5,7 @@ output: html_document
 
 ```{r packages, include=FALSE}
 library(rscview)
+library(pins)
 
 ```
 
