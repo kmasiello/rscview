@@ -22,22 +22,24 @@ library(flexdashboard)
 library(tidyverse)
 library(lubridate)
 library(ggplot2)
-#source("*.R")
+library(rscview)
 ```
 
+```{r check_envvars, include=FALSE}
+check_envvars()
+```
 
-```{r}
-conn <- 
-  connectapi::connect(
-    server = Sys.getenv("CONNECT_SERVER"),
-    api_key = Sys.getenv("CONNECT_API_KEY")
-  )
+```{r get_users_and_logs, include=FALSE}
+conn <- create_connection()
+
 
 #get a table with content name and deployment info
 # content <- get_content(conn, limit = Inf)
-content <- read_rds(here::here("inst", "usage-report", "content_2021-06-14.rds"))
+# content <- readr::read_rds(here::here("inst", "usage-report", "content_2021-06-14.rds"))
+content_list <-pin_get("katie/content_list", board = "rsconnect")
+
 content_info <- content %>% 
-  select(guid, name, title, owner_username, url, app_mode, content_category)
+  select(guid, name, title, owner_username, url, app_mode, content_category, access_type)
 
 #Notes for future self - from `https://github.com/rstudio/connectapi/blob/002f0a6a0a6d3cf2eadc57f3daf173dd13ca65ff/R/ptype.R#L56`
 #(1=shiny, 2=shiny Rmd, 3=source Rmd, 4=static, 5=api, 6=tensorflow, 7=python, 8=flask, 9=dash, 10=streamlit)
@@ -59,14 +61,17 @@ content_info <- content_info %>% left_join(type_ref, by = "app_mode")
 
 ```{r setup, include=FALSE}
 
-days_back <- as.numeric(Sys.getenv("DAYSBACK", 90))
+# days_back <- 90 #days
+months_back <- 3 #months
+# ^^--- this needs to be added to a global variable. this goes into the ETL that pins the shiny / nonshiny usage pins. 
+## TODO create a test to see how long each API calls and advise if a pin should be used or if running the call live is okay.
 
-default_content_title <- "Unknown (Deleted Content?)"
+#I think we dont need this --v
+# default_content_title <- "Unknown (Deleted Content?)"
 
-report_from <- lubridate::today() - lubridate::ddays(days_back)
+report_from <- lubridate::today() - lubridate::dmonths(months_back)
 
-
-# shiny <- get_usage_shiny(
+# shiny_raw <- get_usage_shiny(
 #   conn,
 #   from = report_from,
 #   limit = Inf
@@ -77,25 +82,41 @@ report_from <- lubridate::today() - lubridate::ddays(days_back)
 #     session_duration = ended - started
 #     ) %>%
 #   filter(session_duration > lubridate::dseconds(5))
-shiny_raw <- read_rds(here::here("inst", "usage-report", "shiny_2021-06-14.rds"))
 
+# shiny_raw <- read_rds(here::here("inst", "usage-report", "shiny_2021-06-14.rds"))
+shiny_raw <- pin_get("katie/shiny_raw_usage", board = "rsconnect")
 shiny <- shiny_raw %>% select(-ended)
 
-
-# other <- get_usage_static(
+# start_time <- Sys.time()
+# other_raw <- get_usage_static(
 #   conn,
 #   from = report_from,
 #   limit = Inf
 # )
-other_raw <- read_rds(here::here("inst", "usage-report", "static_2021-06-14.rds"))
+# end_time <- Sys.time()
+# duration_get_other <- end_time - start_time
+
+other_raw <- pin_get("katie/nonshiny_raw_usage", board = "rsconnect")
+# other_raw <- read_rds(here::here("inst", "usage-report", "static_2021-06-14.rds"))
 
 other <- other_raw %>% select(-variant_key, -rendering_id, -bundle_id) %>% 
   rename("started" = time)
 
-all_users <- get_users(conn, page_size = 500)
+# all_users <- get_users(conn, page_size = 500)
 
-usage_data <-   rbind(shiny, other)
+
+access_data <- rbind(shiny, other)
 # readr::write_rds(data, file = here::here("inst","usage-report", "data.rds"))
+
+
+access_details <- access_data %>% left_join(content_info, by = c(content_guid = "guid")) %>% 
+  left_join(select(user_info, username, guid), by = c(user_guid = "guid"))
+
+# WHAT IS NA for acl? 
+# how is NA username accessing content that is acl, logged_in?
+authenticated_access <- access_details %>% filter(access_type != "all") 
+## ^ check this.
+
 ```
 
 This content summary may contain privileged information. The report is generated
@@ -112,24 +133,21 @@ Row
 -----------------------------------------------------------------------
 What content is most popular?
 ```{r}
-days_back <- 90
-summary_usage <- usage_data %>%
-  filter(started > today() - ddays(days_back)) %>% 
-  mutate(month = round_date(started, "month")) %>% 
-  group_by(month, content_guid) %>% 
-  summarise(visits = n()) %>% 
-  left_join(content_info, by = c(content_guid = "guid")) %>% 
-  arrange(desc(visits))
-  
 
-### LEFT OFF HERE MONDAY NIGHT ######
-# Thinking that the static report is really the everything-but-shiny report, so need to check this to see if flask, APIs, etc. are covered here. 
-# Create top N chart of most frequently visited pieces of content. 
-# Also create filter by publisher
-# and summary of number of things published by usernmae
+get_top_n_visited <- function(access_details, monthsback = months_back, n = Inf){
+  access_details %>%
+  filter(started > today() - dmonths(months_back)) %>% 
+  mutate(month = round_date(started, "month")) %>% 
+  group_by(month, content_guid, user_guid, name, title, owner_username, access_type, content_type, username) %>% 
+  summarise(visits = n()) %>% 
+  arrange(desc(visits)) %>% head(n)
+}
+
+
+summary_access <- get_top_n_visited(access_details, months_back)
 
 ## NEED HELP with this plot -- cant get it in pareto sort and want to filter results
-ggplot(summary_usage, aes(reorder(title, visits), visits)) + 
+ggplot(summary_access, aes(reorder(title, visits), visits)) + 
      geom_bar(stat = "identity") +  
      # coord_flip() + 
      labs(
@@ -138,5 +156,52 @@ ggplot(summary_usage, aes(reorder(title, visits), visits)) +
      ) + facet_wrap(~as.Date(month), scales = "free")
 
 
+get_top_n_visitors <- function(access_details, monthsback = months_back, n = Inf){
+  access_details %>%
+    filter(!is.na(user_guid)) %>% 
+  filter(started > today() - dmonths(months_back)) %>% 
+  mutate(month = round_date(started, "month")) %>% 
+  group_by(month, user_guid, name, title, owner_username, access_type, content_type, username) %>% 
+  summarise(visits = n()) %>% arrange(desc(visits)) %>% head(n)
+}
+
+
+  
+
+# Create top N chart of most frequently visited pieces of content. 
+# Also create filter by publisher
+# and summary of number of things published by usernae
+
+
+
 ```
 
+
+```{r}
+
+
+access_details %>% 
+  filter(username == "katie") %>% group_by(content_guid, title, name, owner_username, content_type) %>% 
+  summarise(visits = n()) %>% arrange(desc(visits)) 
+#what content has a user visited?
+get_user_access_activity <- function(access_details, user_guid) {
+  access_details %>% filter(user_guid == !!user_guid)
+}
+
+get_user_access_activity(access_details, my_guid) %>% 
+  get_top_n_visited()
+
+#what users visit a piece of content most?
+get_content_access_activity <- function(access_details, content_guid){
+  access_details %>% filter(content_guid == !!content_guid)
+}
+
+
+get_content_access_activity(authenticated_access, (get_top_n_visited(authenticated_access)$content_guid)[3]) %>% 
+  get_top_n_visitors()
+
+#what apps have the largest number of users
+authenticated_access %>% get_top_n_visitors()
+
+```
+ 
