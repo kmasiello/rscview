@@ -1,0 +1,84 @@
+---
+title: "Pin Instrumentation Data for Audit Report"
+output: html_document
+---
+
+
+```{r packages, include=FALSE}
+library(rscview)
+library(connectapi)
+library(pins)
+library(dplyr)
+
+```
+
+
+```{r check_envvars, include=FALSE}
+check_envvars()
+
+conn <- create_connection()
+
+
+```
+
+## Set timeframe
+```{r}
+months_back <- 3
+report_from <- lubridate::today() - lubridate::dmonths(months_back)
+
+```
+
+
+## Pull Shiny Instrumentation Data
+
+```{r get_shiny}
+start_time <- Sys.time()
+
+shiny <- get_usage_shiny(
+  conn,
+  from = report_from,
+  limit = Inf
+) %>%
+  mutate(
+    started = lubridate::ymd_hms(started),
+    ended = lubridate::ymd_hms(ended),
+    session_duration = ended - started
+    ) %>%
+  filter(session_duration > lubridate::dseconds(5))
+
+end_time <- Sys.time()
+duration <- end_time - start_time
+```
+
+
+Info: `get_usage_shiny` took `r paste(round(duration[[1]], 2),  units(duration))` to run.
+
+## Pin to RStudio Connect
+```{r pin_it}
+
+create_pin(shiny, name = "shiny_raw_usage", description = "Results pulled via `connectapi::get_usage_shiny()` for audit reports")
+```
+
+## Pull Other instrumentation data
+```{r}
+start_time <- Sys.time()
+
+nonshiny <- get_usage_static(
+  conn,
+  from = report_from,
+  limit = Inf
+)
+
+end_time <- Sys.time()
+duration <- end_time - start_time
+```
+
+Info: `get_usage_static` took `r paste(round(duration[[1]], 2),  units(duration))` to run.
+
+
+## Pin to RStudio Connect
+```{r pin_it_again}
+
+create_pin(nonshiny, name = "nonshiny_raw_usage", description = "Results pulled via `connectapi::get_usage_static()` for audit reports")
+```
+
