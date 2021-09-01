@@ -23,6 +23,9 @@ library(tidyverse)
 library(lubridate)
 library(ggplot2)
 library(rscview)
+library(pins)
+library(sunburstR)
+library(d3r)
 ```
 
 ```{r check_envvars, include=FALSE}
@@ -38,8 +41,8 @@ conn <- create_connection()
 # content <- readr::read_rds(here::here("inst", "usage-report", "content_2021-06-14.rds"))
 content_list <-pin_get("katie/content_list", board = "rsconnect")
 
-content_info <- content %>% 
-  select(guid, name, title, owner_username, url, app_mode, content_category, access_type)
+content_info_tbl <- content_list %>% 
+  dplyr::select(guid, name, title, owner_username, url, app_mode, content_category, access_type, py_version, r_version)
 
 #Notes for future self - from `https://github.com/rstudio/connectapi/blob/002f0a6a0a6d3cf2eadc57f3daf173dd13ca65ff/R/ptype.R#L56`
 #(1=shiny, 2=shiny Rmd, 3=source Rmd, 4=static, 5=api, 6=tensorflow, 7=python, 8=flask, 9=dash, 10=streamlit)
@@ -55,7 +58,9 @@ type_ref <- tibble(app_mode = 1:10,
                                    "Dash", 
                                    "Streamlit"))
 
-content_info <- content_info %>% left_join(type_ref, by = "app_mode")
+content_info_tbl <- content_info_tbl %>% left_join(type_ref, by = "app_mode")
+
+user_info_tbl <- get_users_tbl(conn)
 ```
 
 
@@ -102,17 +107,23 @@ other_raw <- pin_get("katie/nonshiny_raw_usage", board = "rsconnect")
 other <- other_raw %>% select(-variant_key, -rendering_id, -bundle_id) %>% 
   rename("started" = time)
 
+## TO DO - ask - does flask and other interactive content in the "other" category no session duration?
+
 # all_users <- get_users(conn, page_size = 500)
 
 
-access_data <- rbind(shiny, other)
+access_data <- bind_rows(shiny, other) %>% 
+  mutate(session_duration_mins = as.numeric(session_duration)/60) %>% 
+  select(-session_duration)
 # readr::write_rds(data, file = here::here("inst","usage-report", "data.rds"))
 
 
-access_details <- access_data %>% left_join(content_info, by = c(content_guid = "guid")) %>% 
-  left_join(select(user_info, username, guid), by = c(user_guid = "guid"))
+access_details <- access_data %>% left_join(content_info_tbl, by = c(content_guid = "guid")) %>% 
+  left_join(select(user_info_tbl, username, guid), by = c(user_guid = "guid"))
 
-# WHAT IS NA for acl? 
+# Note - curious thing to look into - what is the content that doesnt seem to exist with long durations? was this since deleted and thats why it has no info?  content guid example a3a16278-fca0-4592-a547-e7087395571f
+
+# WHAT IS NA for acl? <- it's the same as content_type == NA.  but what is it?  
 # how is NA username accessing content that is acl, logged_in?
 authenticated_access <- access_details %>% filter(access_type != "all") 
 ## ^ check this.
@@ -139,21 +150,65 @@ get_top_n_visited <- function(access_details, monthsback = months_back, n = Inf)
   filter(started > today() - dmonths(months_back)) %>% 
   mutate(month = round_date(started, "month")) %>% 
   group_by(month, content_guid, user_guid, name, title, owner_username, access_type, content_type, username) %>% 
-  summarise(visits = n()) %>% 
-  arrange(desc(visits)) %>% head(n)
+  summarise(visits = n(), .groups = "drop") %>% 
+  arrange(desc(visits)) %>% 
+    head(n)
 }
 
+```
+
+
+# R vs Python content
+```{r}
+#the vision: sunburst plot of R vs Python and version of each used. <- wonder if we should color special the reticulated items :)
+
+content_tbl_lang <- content_info_tbl %>% select(guid, name, title, r_version, py_version, content_category) %>% 
+  select(-guid, -content_category, -name) %>% 
+  filter(!(is.na(r_version) & is.na(py_version))) %>% 
+  rename("R" = r_version, "Python" = py_version) %>% 
+  pivot_longer(cols = c(R, Python), names_to = "language", values_to = "version") %>% 
+  filter(!is.na(version))
+
+
+content_lang_tree <- content_tbl_lang %>% d3_nest(value_cols = c("language", "version"))
+
+sund2b(content_lang_tree, 
+       valueField = "language", 
+       # colors = my_colors, 
+       rootLabel = "Language", 
+       width = "100%",
+       showLabels = TRUE,
+       breadcrumbs = sund2bBreadcrumb(enabled = FALSE))
+```
+
+
+
+```{r}
 
 summary_access <- get_top_n_visited(access_details, months_back)
 
 ## NEED HELP with this plot -- cant get it in pareto sort and want to filter results
-ggplot(summary_access, aes(reorder(title, visits), visits)) + 
-     geom_bar(stat = "identity") +  
-     # coord_flip() + 
+
+visits_by_month_tbl <-
+  summary_access %>% 
+  dplyr::select(month, visits, content_type) %>%
+  dplyr::group_by(month, content_type) %>%
+  dplyr::summarize(n = n(), .groups = "keep") %>%
+  dplyr::arrange(desc(month), desc(n)) %>%
+  dplyr::
+  
+
+ggplot(
+  data = visits_by_month_tbl,
+  aes(x = month, y = visits)
+  ) + 
+  geom_bar(stat = "identity") +  
      labs(
-       y = "Number of Visits",
-       x = NULL
-     ) + facet_wrap(~as.Date(month), scales = "free")
+       x = NULL,
+       y = "Number of Visits"
+     ) + 
+  facet_wrap(~ content_type, scales = "free") +
+  scale_x_datetime(date_labels = "%m %Y")
 
 
 get_top_n_visitors <- function(access_details, monthsback = months_back, n = Inf){
