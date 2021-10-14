@@ -33,7 +33,7 @@ check_envvars()
 
 conn <- create_connection()
 groups_tbl <- get_groups_tbl(conn = conn)
-group_count <- nrow(groups_tbl)
+group_count <- groups_tbl %>% select(group_name) %>% unique() %>% nrow()
 groups_summary <- get_groups_summary(groups_tbl = groups_tbl)
 ```
 
