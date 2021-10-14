@@ -17,11 +17,22 @@ check_envvars()
 
 Authenticated access from a user is required. If an "administrator" role is used, then all content items will be returned regardless of the visibility to the requesting user.
 
-## Pull Group list
+## Pull Group Names and Group Members
 
-```{r get_content}
+```{r}
 start_time <- Sys.time()
-group_list <- get_groups_tbl() 
+group_names <- connectapi::get_groups(src = create_connection(), limit = Inf)
+end_time <- Sys.time()
+duration <- end_time - start_time
+```
+
+Info: `connectapi::get_groups()` took `r paste(round(duration[[1]], 2),  units(duration))` to run.
+
+
+```{r}
+start_time <- Sys.time()
+group_members <- get_groups_tbl()
+
 end_time <- Sys.time()
 duration <- end_time - start_time
 ```
@@ -30,7 +41,9 @@ Info: `get_groups_tbl` took `r paste(round(duration[[1]], 2),  units(duration))`
 
 ## Pin Group List to RStudio Connect
 ```{r pin_it}
-create_pin(group_list, description = "Results pulled via `connectapi` for audit reports")
+create_pin(group_names, description = "Results pulled via `connectapi` for audit reports")
+create_pin(group_members, description = "Results pulled via `connectapi` for audit reports")
+
 ```
 
 ```{r}
