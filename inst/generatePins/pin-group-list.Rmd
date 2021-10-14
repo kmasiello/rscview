@@ -1,0 +1,41 @@
+---
+title: "Pin Group List for Audit Report"
+output: html_document
+---
+
+```{r packages, include=FALSE}
+library(rscview)
+library(pins)
+
+```
+
+
+```{r check_envvars, include=FALSE}
+check_envvars()
+```
+
+
+Authenticated access from a user is required. If an "administrator" role is used, then all content items will be returned regardless of the visibility to the requesting user.
+
+## Pull Group list
+
+```{r get_content}
+start_time <- Sys.time()
+group_list <- get_groups_tbl() 
+end_time <- Sys.time()
+duration <- end_time - start_time
+```
+
+Info: `get_groups_tbl` took `r paste(round(duration[[1]], 2),  units(duration))` to run.
+
+## Pin Group List to RStudio Connect
+```{r pin_it}
+create_pin(group_list, description = "Results pulled via `connectapi` for audit reports")
+```
+
+```{r}
+# TO DO: add a create_tag to collect all the pins and dashboards
+
+# TO DO: add in a set_schedule command
+```
+
