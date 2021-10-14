@@ -9,10 +9,11 @@ library(pins)
 
 
 # conn <- create_connection()
-groups_tbl <- pin_read("katie/group-info", board = board_rsconnect())
-group_names <- get_group_names(x = groups_tbl)
+board <- pins::board_rsconnect()
+groups_tbl <- board %>% pin_read("katie/group_members")
+group_names <- get_group_names()
 group_count <- length(group_names)
-# groups_data <- get_groups_tbl(conn)
+groups_data <- get_groups_tbl(conn)
 groups_summary <- get_groups_summary(groups_tbl = groups_tbl)
 
 #### UI #####
