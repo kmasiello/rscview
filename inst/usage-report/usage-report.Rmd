@@ -162,23 +162,32 @@ get_top_n_visited <- function(access_details, monthsback = months_back, n = Inf)
 ```{r}
 #the vision: sunburst plot of R vs Python and version of each used. <- wonder if we should color special the reticulated items :)
 
-content_tbl_lang <- content_info_tbl %>% select(guid, name, title, r_version, py_version, content_category) %>% 
-  select(-guid, -content_category, -name) %>% 
+content_tbl_lang <- content_info_tbl %>% 
+  select(guid, name, title, r_version, py_version, content_category) %>% 
+  # select(-guid, -content_category, -name) %>% 
   filter(!(is.na(r_version) & is.na(py_version))) %>% 
   rename("R" = r_version, "Python" = py_version) %>% 
   pivot_longer(cols = c(R, Python), names_to = "language", values_to = "version") %>% 
-  filter(!is.na(version))
+  filter(!is.na(version)) %>% 
+  group_by(language, version) %>% summarise(count = n()) %>% 
+  mutate(path = paste(language, version, sep = "-")) %>% ungroup() %>% 
+  select(path, count)
+
+my_colors <- list(range = c(calls_account_color$acct_color, opps_color$opp_color),
+                  domain = c(calls_account_color$account_name_days, opps_color$opp_name_days))
 
 
-content_lang_tree <- content_tbl_lang %>% d3_nest(value_cols = c("language", "version"))
-
-sund2b(content_lang_tree, 
-       valueField = "language", 
+sund2b(content_tbl_lang, 
+       valueField = "count",
        # colors = my_colors, 
-       rootLabel = "Language", 
+       rootLabel = "All Content", 
        width = "100%",
-       showLabels = TRUE,
-       breadcrumbs = sund2bBreadcrumb(enabled = FALSE))
+       # breadcrumbs = sund2bBreadcrumb(enabled = FALSE),
+       showLabels = TRUE
+       )
+
+sunburst(content_tbl_lang)
+
 ```
 
 

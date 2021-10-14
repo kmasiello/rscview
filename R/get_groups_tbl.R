@@ -14,7 +14,7 @@ get_groups_tbl <- function(conn = create_connection()) {
     purrr::transpose() %>%
     purrr::map_dfr(
       ~ connectapi::get_group_members(src = conn, guid = .x$guid) %>%
-        dplyr::mutate(group_name = .x$name)
+        dplyr::mutate(name = .x$name)
       ) %>%
     dplyr::select(
       -created_time, -updated_time, -active_time,
@@ -30,9 +30,45 @@ get_groups_tbl <- function(conn = create_connection()) {
 #' @return a tibble
 #'
 #' @export
-get_groups_summary <- function(groups_tbl = get_groups_tbl()) {
+get_groups_summary <- function(groups_tbl = groups_tbl) {
 
   groups_tbl %>%
-    dplyr::group_by(group_name) %>%
+    dplyr::group_by(name) %>%
+    rename("Group Name" = name) %>%
     dplyr::summarise("Number of Members" = dplyr::n())
 }
+
+#' Make a Summary Table of Group Members
+#'
+#' @param x Name of Group to list members of
+#'
+#' @return a reactable table
+#'
+#' @export
+
+make_group_members_tbl <- function(x = "All") {
+  if(x == "All"){
+    reactable(
+      groups_tbl, searchable = TRUE, highlight = TRUE,
+      filterable = TRUE, width = "100%"
+    )
+  }else
+
+    reactable(
+    dplyr::filter(groups_tbl, name == .env$x), searchable = TRUE, highlight = TRUE,
+    filterable = TRUE, width = "100%"
+  )
+}
+
+#' List the names of groups on the Connect server
+#'
+#' @param x groups_tbl
+#'
+#' @return a vector
+#'
+#' @export
+
+get_group_names <- function(x = groups_tbl) {
+
+  x %>% dplyr::select(name) %>% unique() %>% dplyr::pull()
+  }

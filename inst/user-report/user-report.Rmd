@@ -164,6 +164,11 @@ add_history <- creation_history %>%
   mutate(active_in_last_year = case_when(username %in% drop_off_history$username ~ FALSE,
                             TRUE ~ TRUE))
   
+### TODO - IDEA - use a chart like this for user history: 
+### http://www.r-graph-gallery.com/318-custom-dygraphs-time-series-example.html
+### 
+
+
 
 # Historical user additions
 plot_historical <- ggplot(add_history, aes(x = event_time, y = user_add_num, color = active_in_last_year)) +
