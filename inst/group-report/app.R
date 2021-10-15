@@ -8,13 +8,11 @@ library(reactable)
 library(pins)
 
 
-# conn <- create_connection()
-board <- pins::board_rsconnect()
-groups_tbl <- board %>% pin_read("katie/group_members")
-group_names <- get_group_names()
-group_count <- length(group_names)
-groups_data <- get_groups_tbl(conn)
-groups_summary <- get_groups_summary(groups_tbl = groups_tbl)
+board <- board_rsconnect()
+group_members_tbl <- board %>% pin_read("katie/group_members_tbl")
+group_names_tbl <- board %>% pin_read("katie/group_names_tbl")
+group_count <- group_names_tbl %>% select(group_name) %>% unique() %>% nrow()
+groups_summary <- get_groups_summary(group_names_tbl = group_names_tbl, group_members_tbl=group_members_tbl)
 
 #### UI #####
 ui <- dashboardPage(
@@ -44,6 +42,7 @@ ui <- dashboardPage(
           h3(textOutput("group_selection")),
           h2(textOutput("selected")),
           h2(textOutput("selectedgroup")),
+          h2(textOutput("test")),
           reactableOutput("users_in_group_tbl")
       )
 
@@ -71,10 +70,13 @@ server <- function(input, output) {
     print(selected())
   })
 
-  output$selectedgroup <- renderPrint({group_names[selected()]})
+  output$selectedgroup <- renderPrint({group_names_tbl$group_name[selected()]})
+
+  output$test <- renderPrint({(output$selectedgroup())})
+
 
   output$users_in_group_tbl <- renderReactable({
-    make_group_members_tbl(group_names[selected()])
+    make_group_members_tbl(group_members_tbl,group_names_tbl$group_name[selected()])
   })
 
   # observe({
@@ -89,9 +91,6 @@ server <- function(input, output) {
   # })
 
 
-  output$users_in_group_tbl <- renderReactable({
-    make_group_members_tbl(output$selected)
-  })
 }
 
 shinyApp(ui, server)

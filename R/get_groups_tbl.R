@@ -6,16 +6,16 @@
 #' @return a tibble
 #'
 #' @export
-get_groups_tbl <- function(conn = create_connection()) {
+get_group_members_tbl <- function(conn = create_connection()) {
 
-  groups_tbl_raw <- connectapi::get_groups(src = conn, limit = Inf)
+  group_names_tbl_raw <- connectapi::get_groups(src = conn, limit = Inf)
 
-  groups_tbl_raw %>%
+  group_names_tbl_raw %>%
     purrr::transpose() %>%
     purrr::map_dfr(
       ~ connectapi::get_group_members(src = conn, guid = .x$guid) %>%
         dplyr::mutate(group_name = .x$name)
-      ) %>%
+    ) %>%
     dplyr::select(
       -created_time, -updated_time, -active_time,
       -confirmed, -locked, -guid
@@ -30,12 +30,21 @@ get_groups_tbl <- function(conn = create_connection()) {
 #' @return a tibble
 #'
 #' @export
-get_groups_summary <- function(groups_tbl = groups_tbl) {
+get_groups_summary <- function(group_names_tbl = group_names_tbl, group_members_tbl=group_members_tbl) {
 
-  groups_tbl %>%
-    dplyr::group_by(name) %>%
-    rename("Group Name" = name) %>%
+  summary_w_members <- group_members_tbl %>%
+    dplyr::group_by(group_name) %>%
+    rename("Group Name" = group_name) %>%
     dplyr::summarise("Number of Members" = dplyr::n())
+
+  groups_w_no_members <- tibble(`Group Name` =
+                                  setdiff(group_names_tbl$group_name, group_members_tbl$group_name),
+                                `Number of Members` = 0)
+
+  if(nrow(groups_w_no_members) > 0){
+    groups_summary <- bind_rows(summary_w_members, groups_w_no_members) %>%
+      arrange(`Group Name`)}else
+        groups_summary <- summary_w_members
 }
 
 #' Make a Summary Table of Group Members
@@ -46,18 +55,19 @@ get_groups_summary <- function(groups_tbl = groups_tbl) {
 #'
 #' @export
 
-make_group_members_tbl <- function(x = "All") {
-  if(x == "All"){
-    reactable(
-      groups_tbl, searchable = TRUE, highlight = TRUE,
+make_group_members_tbl <- function(group_members_tbl = group_members_tbl,
+                                   group_name = group_names_tbl$group_name[selected()]) {
+  if(length(group_name)==0){
+    reactable::reactable(
+      group_members_tbl, searchable = TRUE, highlight = TRUE,
       filterable = TRUE, width = "100%"
     )
   }else
 
-    reactable(
-    dplyr::filter(groups_tbl, name == .env$x), searchable = TRUE, highlight = TRUE,
-    filterable = TRUE, width = "100%"
-  )
+    reactable::reactable(
+      dplyr::filter(group_members_tbl, group_name == group_name), searchable = TRUE, highlight = TRUE,
+      filterable = TRUE, width = "100%"
+    )
 }
 
 #' List the names of groups on the Connect server
@@ -71,4 +81,4 @@ make_group_members_tbl <- function(x = "All") {
 get_group_names <- function(x = groups_tbl) {
 
   x %>% dplyr::select(name) %>% unique() %>% dplyr::pull()
-  }
+}

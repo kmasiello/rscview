@@ -6,6 +6,7 @@ output: html_document
 ```{r packages, include=FALSE}
 library(rscview)
 library(pins)
+library(dplyr)
 
 ```
 
@@ -21,7 +22,7 @@ Authenticated access from a user is required. If an "administrator" role is used
 
 ```{r}
 start_time <- Sys.time()
-group_names <- connectapi::get_groups(src = create_connection(), limit = Inf)
+group_names_tbl <- connectapi::get_groups(src = create_connection(), limit = Inf) %>% dplyr::rename(group_name = name)
 end_time <- Sys.time()
 duration <- end_time - start_time
 ```
@@ -31,7 +32,7 @@ Info: `connectapi::get_groups()` took `r paste(round(duration[[1]], 2),  units(d
 
 ```{r}
 start_time <- Sys.time()
-group_members <- get_groups_tbl()
+group_members_tbl <- get_groups_tbl()
 
 end_time <- Sys.time()
 duration <- end_time - start_time
@@ -41,8 +42,8 @@ Info: `get_groups_tbl` took `r paste(round(duration[[1]], 2),  units(duration))`
 
 ## Pin Group List to RStudio Connect
 ```{r pin_it}
-create_pin(group_names, description = "Results pulled via `connectapi` for audit reports")
-create_pin(group_members, description = "Results pulled via `connectapi` for audit reports")
+create_pin(group_names_tbl, description = "Results pulled via `connectapi` for audit reports")
+create_pin(group_members_tbl, description = "Results pulled via `connectapi` for audit reports")
 
 ```
 
