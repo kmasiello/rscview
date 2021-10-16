@@ -29,23 +29,16 @@ ui <- dashboardPage(
         title = "Groups",
         reactableOutput("groups_summary")
       )
-    )
-
-    ,
+    ),
 
     fluidRow(
     ),
 
     fluidRow(
-
       box(width = 12,
-          h3(textOutput("group_selection")),
-          h2(textOutput("selected")),
-          h2(textOutput("selectedgroup")),
-          h2(textOutput("test")),
+          h3(textOutput("selectedgroup")),
           reactableOutput("users_in_group_tbl")
       )
-
     )
 
   ) #end dashboardBody
@@ -54,51 +47,55 @@ ui <- dashboardPage(
 ##### SERVER ######
 server <- function(input, output) {
 
+  # Reactive elements
+  selected <- reactive(getReactableState("groups_summary", "selected"))
+
+  selectedgroup <- reactive({
+    group_names_tbl$group_name[selected()]
+  })
+
+  nothingselected <- reactive({if(is.null(selected())){TRUE}else{FALSE}})
+
+  # Outputs
   output$total_groups <- renderValueBox({
     group_count %>%
       prettyNum(big.mark = ",") %>%
       valueBox(subtitle = "Number of Groups")
   })
 
+  output$selectedgroup <- renderText({
+    if(length(selectedgroup()>0)){
+      paste("Members of:",group_names_tbl$group_name[selected()])}else{
+        paste("Make a group selection to filter table, or use search to find all groups a user is a member of.")
+      }
+  })
+
+
   output$groups_summary <- renderReactable({
-    reactable(groups_summary, selection = "single", onClick = "select", highlight = TRUE)
+    reactable(groups_summary, selection = "single", onClick = "select", highlight = TRUE,
+              showPageSizeOptions = TRUE, defaultPageSize = 10)
   })
-
-  selected <- reactive(getReactableState("groups_summary", "selected"))
-
-  output$selected <- renderPrint({
-    print(selected())
-  })
-
-  output$selectedgroup <- renderPrint({group_names_tbl$group_name[selected()]})
-
-  output$test <- renderPrint({(output$selectedgroup())})
-
 
   output$users_in_group_tbl <- renderReactable({
-    make_group_members_tbl(group_members_tbl,group_names_tbl$group_name[selected()])
+
+    if(nothingselected()==TRUE){
+      reactable::reactable(
+        group_members_tbl, searchable = TRUE, highlight = TRUE,
+        filterable = TRUE, width = "100%"
+      )
+    }else
+
+      reactable::reactable(
+        dplyr::filter(group_members_tbl, group_name == selectedgroup()), searchable = TRUE, highlight = TRUE,
+        filterable = TRUE, width = "100%"
+      )
+
+
   })
 
-  # observe({
-  #   # Filter data
-  #   filtered <- if (length(selected()) > 0) {
-  #     groups_data[groups_data$group_name %in% input$filter_type]
-  #     data[data$Type %in% input$filter_type, ]
-  #   } else {
-  #     groups_data
-  #   }
-  #   updateReactable("table", data = filtered)
-  # })
 
 
 }
 
 shinyApp(ui, server)
 
-
-      # selectInput("group_selection", label = h3("Select group"),
-      #             choices = c("All",group_names))
-
-  # output$group_selection <- renderText({
-  #   paste("Members of:",input$group_selection)
-  #   })

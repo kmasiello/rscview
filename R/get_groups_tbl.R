@@ -49,14 +49,15 @@ get_groups_summary <- function(group_names_tbl = group_names_tbl, group_members_
 
 #' Make a Summary Table of Group Members
 #'
-#' @param x Name of Group to list members of
+#' @param group_members_tbl Group members table
+#' @param group_name Name of group
 #'
 #' @return a reactable table
 #'
 #' @export
 
 make_group_members_tbl <- function(group_members_tbl = group_members_tbl,
-                                   group_name = group_names_tbl$group_name[selected()]) {
+                                   group_name = selectedgroup()) {
   if(length(group_name)==0){
     reactable::reactable(
       group_members_tbl, searchable = TRUE, highlight = TRUE,

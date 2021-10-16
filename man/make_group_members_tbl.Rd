@@ -4,10 +4,15 @@
 \alias{make_group_members_tbl}
 \title{Make a Summary Table of Group Members}
 \usage{
-make_group_members_tbl(x = "All")
+make_group_members_tbl(
+  group_members_tbl = group_members_tbl,
+  group_name = selectedgroup()
+)
 }
 \arguments{
-\item{x}{Name of Group to list members of}
+\item{group_members_tbl}{Group members table}
+
+\item{group_name}{Name of group}
 }
 \value{
 a reactable table
