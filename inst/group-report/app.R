@@ -6,7 +6,7 @@ library(reactable)
 library(pins)
 
 ## TODO: Bug that when the summary table is re-sorted, the selected value does not change.
-
+## TODO: add reference to pin date and source
 board <- board_rsconnect()
 group_members_tbl <- board %>% pin_read("katie/group_members_tbl")
 group_names_tbl <- board %>% pin_read("katie/group_names_tbl")
@@ -37,19 +37,9 @@ ui <- dashboardPage(
            box(width = 12,
                h3(textOutput("selectedgroup")),
                reactableOutput("users_in_group_tbl")
-           )),
+           ))
 
-      fluidRow(
-      # valueBoxOutput("total_groups"),
 
-    ),
-
-    fluidRow(
-    ),
-
-    fluidRow(
-
-    )
 
   ) #end dashboardBody
 )
