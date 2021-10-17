@@ -1,12 +1,11 @@
 library(shiny)
 library(shinydashboard)
-library(crosstalk)
-library(ggiraph)
 library(dplyr)
 library(rscview)
 library(reactable)
 library(pins)
 
+## TODO: Bug that when the summary table is re-sorted, the selected value does not change.
 
 board <- board_rsconnect()
 group_members_tbl <- board %>% pin_read("katie/group_members_tbl")
@@ -16,29 +15,40 @@ groups_summary <- get_groups_summary(group_names_tbl = group_names_tbl, group_me
 
 #### UI #####
 ui <- dashboardPage(
-  dashboardHeader(title = "Groups on RStudio Connect"),
+  dashboardHeader(title = "Groups on RStudio Connect",
+                  titleWidth = 400),
   dashboardSidebar(disable = TRUE ),
   dashboardBody(
     tags$head(
       tags$link(rel = "stylesheet", type = "text/css", href = "custom.css")
     ),
+    column(4,
+           fluidRow(valueBoxOutput("total_groups", width=NULL)),
+           fluidRow(
+             # h2(textOutput("selectedgroup")),
+
+             box(width = NULL,
+               title = "Groups",
+               reactableOutput("groups_summary")
+             )
+           )
+           ),
+    column(8,
+           box(width = 12,
+               h3(textOutput("selectedgroup")),
+               reactableOutput("users_in_group_tbl")
+           )),
 
       fluidRow(
-      valueBoxOutput("total_groups"),
-      box(
-        title = "Groups",
-        reactableOutput("groups_summary")
-      )
+      # valueBoxOutput("total_groups"),
+
     ),
 
     fluidRow(
     ),
 
     fluidRow(
-      box(width = 12,
-          h3(textOutput("selectedgroup")),
-          reactableOutput("users_in_group_tbl")
-      )
+
     )
 
   ) #end dashboardBody
@@ -57,6 +67,9 @@ server <- function(input, output) {
   nothingselected <- reactive({if(is.null(selected())){TRUE}else{FALSE}})
 
   # Outputs
+
+  output$selected <- renderText({paste("selected row is:",selected())})
+
   output$total_groups <- renderValueBox({
     group_count %>%
       prettyNum(big.mark = ",") %>%
@@ -65,7 +78,7 @@ server <- function(input, output) {
 
   output$selectedgroup <- renderText({
     if(length(selectedgroup()>0)){
-      paste("Members of:",group_names_tbl$group_name[selected()])}else{
+      paste("Members of:",group_names_tbl$group_name[selected()],"testing - selected row is",selected())}else{
         paste("Make a group selection to filter table, or use search to find all groups a user is a member of.")
       }
   })
