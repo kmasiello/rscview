@@ -5,13 +5,13 @@ library(rscview)
 library(reactable)
 library(pins)
 
-## TODO: Bug that when the summary table is re-sorted, the selected value does not change.
 ## TODO: add reference to pin date and source
 board <- board_rsconnect()
 group_members_tbl <- board %>% pin_read("katie/group_members_tbl")
-group_names_tbl <- board %>% pin_read("katie/group_names_tbl")
+group_names_tbl <- board %>% pin_read("katie/group_names_tbl") %>% arrange(group_name)
 group_count <- group_names_tbl %>% select(group_name) %>% unique() %>% nrow()
-groups_summary <- get_groups_summary(group_names_tbl = group_names_tbl, group_members_tbl=group_members_tbl)
+groups_summary <- get_groups_summary(group_names_tbl = group_names_tbl, group_members_tbl=group_members_tbl) %>%
+  arrange(`Group Name`)
 
 #### UI #####
 ui <- dashboardPage(
@@ -68,7 +68,9 @@ server <- function(input, output) {
 
   output$selectedgroup <- renderText({
     if(length(selectedgroup()>0)){
-      paste("Members of:",group_names_tbl$group_name[selected()],"testing - selected row is",selected())}else{
+      paste("Members of:",group_names_tbl$group_name[selected()])
+      # paste("Members of:",group_names_tbl$group_name[selected()],"testing - selected row is",selected())
+      }else{
         paste("Make a group selection to filter table, or use search to find all groups a user is a member of.")
       }
   })
