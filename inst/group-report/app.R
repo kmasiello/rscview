@@ -1,17 +1,21 @@
 library(shiny)
 library(shinydashboard)
+library(shinydashboardPlus)
 library(dplyr)
 library(rscview)
 library(reactable)
 library(pins)
 
-## TODO: add reference to pin date and source
 board <- board_rsconnect()
 group_members_tbl <- board %>% pin_read("katie/group_members_tbl")
 group_names_tbl <- board %>% pin_read("katie/group_names_tbl") %>% arrange(group_name)
 group_count <- group_names_tbl %>% select(group_name) %>% unique() %>% nrow()
 groups_summary <- get_groups_summary(group_names_tbl = group_names_tbl, group_members_tbl=group_members_tbl) %>%
   arrange(`Group Name`)
+
+pins_used <- c("katie/group_members_tbl", "katie/group_names_tbl")
+pin_freshness_tbl <- pin_freshness_tbl(board, pins_used)
+pin_freshness_str <- pin_freshness_str(pin_freshness_tbl = pin_freshness_tbl)
 
 #### UI #####
 ui <- dashboardPage(
@@ -41,8 +45,10 @@ ui <- dashboardPage(
 
 
 
-  ) #end dashboardBody
-)
+  ), #end dashboardBody
+  footer = dashboardFooter(
+    left = paste("Data sourced from:",pin_freshness_str))
+  )
 
 ##### SERVER ######
 server <- function(input, output) {
