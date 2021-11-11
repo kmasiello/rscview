@@ -4,15 +4,12 @@
 \alias{get_user_current_tbl}
 \title{Get current user table}
 \usage{
-get_user_current_tbl(
-  conn = create_connection(),
-  user_historical_tbl = get_user_historical_tbl()
-)
+get_user_current_tbl(user_historical_tbl = historical_users)
 }
 \arguments{
-\item{conn}{the Connect server connection details containing the server and API key}
-
 \item{user_historical_tbl}{the Historical Users Table}
+
+\item{conn}{the Connect server connection details containing the server and API key}
 }
 \value{
 a tibble

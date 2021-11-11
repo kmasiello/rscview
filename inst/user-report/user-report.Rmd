@@ -33,8 +33,9 @@ conn <- create_connection()
 
 # logs <- get_audit_logs(conn, limit = Inf)
 logs <- read_rds(here::here("inst", "user-report", "logs_2021-07-02.rds"))
+users_tbl <- get_users_tbl(conn)
 
-historical_users <- get_user_historical_tbl()
+historical_users <- get_user_historical_tbl(users_tbl = users_tbl)
 
 ```
 

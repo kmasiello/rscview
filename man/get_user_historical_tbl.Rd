@@ -4,14 +4,9 @@
 \alias{get_user_historical_tbl}
 \title{Get historical user table based on Connect API user table}
 \usage{
-get_user_historical_tbl(
-  conn = create_connection(),
-  users_tbl = get_users_tbl(conn)
-)
+get_user_historical_tbl(users_tbl = users_tbl)
 }
 \arguments{
-\item{conn}{the Connect server connection details containing the server and API key}
-
 \item{users_tbl}{the Users Table via Connect API. By default the user table will be fetched via \code{get_users_tbl()}}
 }
 \value{

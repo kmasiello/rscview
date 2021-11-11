@@ -6,7 +6,7 @@
 #' @return a tibble
 #' @export
 #'
-get_user_current_tbl <- function(conn = create_connection(), user_historical_tbl = get_user_historical_tbl()) {
+get_user_current_tbl <- function(user_historical_tbl = historical_users) {
   user_historical_tbl %>%
     filter(count_as_licensed_named_user == TRUE)
 
