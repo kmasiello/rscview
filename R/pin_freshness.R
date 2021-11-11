@@ -32,7 +32,7 @@ pin_freshness_str <- function(pin_freshness_tbl, pin_names = NULL){
   }
 
   pin_freshness_tbl %>%
-    dplyr::mutate(str = paste0("\"", name, "\" ( dated", created, ")")) %>%
+    dplyr::mutate(str = paste0("\"", name, "\" (dated ", created, ")")) %>%
     dplyr::pull(str) %>%
     paste(collapse = ", ")
 }
