@@ -8,7 +8,7 @@ library(pins)
 library(lubridate)
 library(ggplot2)
 
-#TODO: http://www.r-graph-gallery.com/318-custom-dygraphs-time-series-example.html
+
 
 board <- pins::board_rsconnect()
 
@@ -121,6 +121,9 @@ plot_historical <- ggplot(add_history, aes(x = event_time, y = user_add_num, col
   labs(x = "Date", y = "Number of Users Added to Server", title = "Historical User Additions") +
   theme(legend.position="bottom")
 
+plot <- ggplot(mtcars, aes(x=mpg, y=hp)) + geom_point()
+
+
 # Additions by role
 history_role <- add_history %>% left_join(select(historical_users, username, user_role), by = "username")
 
@@ -162,16 +165,17 @@ ui <-
 
       fluidRow(
         box("All Time User Additions to Server/Cluster",
-            plot_historical),
+            plotOutput("plot_historical")),
         box("By Role",
-            plot_role),
-        box("Licensed Named Users")
+            plotOutput("plot_role"))
       )
 
     ),
     tabPanel(
       title = "Licensed User Details",
-      fluidRow()
+      fluidRow(
+        box("Licensed Named Users",
+                           plotOutput("plot_NU")))
     )
     ), #end navbarPage
   tags$footer(paste("Data sourced from:",pin_freshness_str), class = "footer")
@@ -207,6 +211,15 @@ server <- function(input, output) {
       prettyNum(big.mark = ",") %>%
       valueBox(subtitle = "Viewers")
   })
+
+
+  output$plot_historical <- renderPlot({plot_historical})
+
+
+  output$plot_role <- renderPlot({plot_role})
+
+  output$plot_NU <- renderPlot({plot_NU})
+
 
 }
 
