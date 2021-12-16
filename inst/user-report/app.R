@@ -7,6 +7,7 @@ library(reactable)
 library(pins)
 library(lubridate)
 library(ggplot2)
+library(ggiraph)
 
 
 
@@ -21,7 +22,7 @@ logs <- board %>% pin_read("katie/logs")
 users_tbl <- board %>% pin_read("katie/user-info")
 
 historical_users <- get_user_historical_tbl(users_tbl = users_tbl)
-current_users <- get_user_current_tbl()
+current_users <- get_user_current_tbl(user_historical_tbl = historical_users)
 users_licensed <- current_users %>%
   count() %>%
   pull()
@@ -37,9 +38,7 @@ users_viewers <- current_users %>%
   get_users_role("viewer")
 
 
-### TODO - IDEA - use a chart like this for user history:
-### http://www.r-graph-gallery.com/318-custom-dygraphs-time-series-example.html
-###
+
 lock_history <- logs %>% get_lock_history_tbl()
 
 # user creation history -- I'm doing this from the get_user dataframe and not from the audit logs because the audit logs can show user creation under the events of "add_user" or "add_group_member" depending on the auth mechanism. Colorado has this split in the data in how users are added.
@@ -116,10 +115,14 @@ add_history <- creation_history %>%
 
 # Historical user additions
 plot_historical <- ggplot(add_history, aes(x = event_time, y = user_add_num, color = active_in_last_year)) +
+  geom_point_interactive(aes(tooltip=paste(username, "\n", event_time), data_id=username)) +
   geom_step(color = "#4C8187") +
-  geom_point(alpha = 0.3) +
   labs(x = "Date", y = "Number of Users Added to Server", title = "Historical User Additions") +
+  theme_minimal() +
   theme(legend.position="bottom")
+
+# girafe(ggobj = plot_historical) <- for dev troubleshooting
+
 
 plot <- ggplot(mtcars, aes(x=mpg, y=hp)) + geom_point()
 
@@ -132,7 +135,18 @@ plot_role <- ggplot(history_role, aes(x = event_time, y = user_add_num, color = 
   geom_step(color = "#4C8187") +
   geom_point(alpha = 0.3) +
   labs(x = "Date", y = "Number of Users Added to Server", title = "Historical User Additions") +
+  theme_minimal() +
   theme(legend.position="bottom")
+
+####### LEFT OFF HERE #########
+# time_options <- c("1 year", "2 year", "3 year", "all time")
+#
+# timespan <- year(max(event_history$event_date)) - year(min(event_history$event_date))
+#
+# if(timespan < 3){
+#
+# }
+#########
 
 
 #### UI #####
@@ -165,7 +179,7 @@ ui <-
 
       fluidRow(
         box("All Time User Additions to Server/Cluster",
-            plotOutput("plot_historical")),
+            girafeOutput("plot_historical_interactive")),
         box("By Role",
             plotOutput("plot_role"))
       )
@@ -214,6 +228,8 @@ server <- function(input, output) {
 
 
   output$plot_historical <- renderPlot({plot_historical})
+
+  output$plot_historical_interactive <- renderGirafe({girafe(ggobj = plot_historical)})
 
 
   output$plot_role <- renderPlot({plot_role})
