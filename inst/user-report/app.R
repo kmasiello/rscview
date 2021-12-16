@@ -121,10 +121,7 @@ plot_historical <- ggplot(add_history, aes(x = event_time, y = user_add_num, col
   theme_minimal() +
   theme(legend.position="bottom")
 
-# girafe(ggobj = plot_historical) <- for dev troubleshooting
-
-
-plot <- ggplot(mtcars, aes(x=mpg, y=hp)) + geom_point()
+# girafe(ggobj = plot_historical) #<- for dev troubleshooting
 
 
 # Additions by role
@@ -133,10 +130,13 @@ history_role <- add_history %>% left_join(select(historical_users, username, use
 plot_role <- ggplot(history_role, aes(x = event_time, y = user_add_num, color = active_in_last_year)) +
   facet_grid(. ~ user_role) +
   geom_step(color = "#4C8187") +
-  geom_point(alpha = 0.3) +
+  geom_point_interactive(aes(tooltip=paste(username, "\n", event_time), data_id=username)) +
   labs(x = "Date", y = "Number of Users Added to Server", title = "Historical User Additions") +
   theme_minimal() +
   theme(legend.position="bottom")
+
+# girafe(ggobj = plot_role) #<- for dev troubleshooting
+
 
 ####### LEFT OFF HERE #########
 # time_options <- c("1 year", "2 year", "3 year", "all time")
@@ -181,7 +181,7 @@ ui <-
         box("All Time User Additions to Server/Cluster",
             girafeOutput("plot_historical_interactive")),
         box("By Role",
-            plotOutput("plot_role"))
+            girafeOutput("plot_role_interactive"))
       )
 
     ),
@@ -233,6 +233,8 @@ server <- function(input, output) {
 
 
   output$plot_role <- renderPlot({plot_role})
+
+  output$plot_role_interactive <- renderGirafe({girafe(ggobj=plot_role)})
 
   output$plot_NU <- renderPlot({plot_NU})
 
