@@ -103,9 +103,13 @@ event_history <- bind_rows(creation_history, lock_history, drop_off_history) %>%
 plot_NU <- ggplot(event_history, aes(x = event_time, y = usercount, color = event)) +
   geom_step(color = "#4C8187") +
   geom_point(alpha = 0.6) +
+  geom_point_interactive(aes(tooltip=paste(username, "\n", as_date(event_time), "\n", event), data_id=username)) +
   labs(x = "Date", y = "Named Users", title = "Historical Named Users") +
+  theme_minimal() +
   theme(legend.position="bottom") +
-  geom_hline(yintercept = users_licensed)
+  geom_hline_interactive(yintercept = users_licensed, color="gray50",linetype = "dashed", tooltip=paste(users_licensed, "Current Named Users"))
+
+girafe(ggobj = plot_NU)
 
 
 add_history <- creation_history %>%
@@ -189,7 +193,7 @@ ui <-
       title = "Licensed User Details",
       fluidRow(
         box("Licensed Named Users",
-                           plotOutput("plot_NU")))
+                           girafeOutput("plot_NU_interactive")))
     )
     ), #end navbarPage
   tags$footer(paste("Data sourced from:",pin_freshness_str), class = "footer")
@@ -237,6 +241,8 @@ server <- function(input, output) {
   output$plot_role_interactive <- renderGirafe({girafe(ggobj=plot_role)})
 
   output$plot_NU <- renderPlot({plot_NU})
+
+  output$plot_NU_interactive <- renderGirafe({girafe(ggobj = plot_NU)})
 
 
 }
