@@ -185,7 +185,7 @@ ui <-
 
       fluidRow(
         box("Current Named Users", width = 12,
-            fluidRow(downloadButton("downloadData", "Download")),
+            fluidRow(align="right", downloadButton("downloadData", "Download")),
             fluidRow(reactableOutput("current_named_users"))
             )
       )
