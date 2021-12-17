@@ -174,12 +174,29 @@ ui <-
       useShinydashboard()
     ),
     tabPanel(
-      title = "Overview",
+      title = "Current Named User Details",
       fluidRow(valueBoxOutput("users_licensed", width = 3),
                valueBoxOutput("users_admins", width = 3),
                valueBoxOutput("users_pubs", width = 3),
                valueBoxOutput("users_viewers", width = 3)
       ),
+
+      fluidRow(
+        box("Current Named Users", width = 12,
+            fluidRow(downloadButton("downloadData", "Download")),
+            fluidRow(reactableOutput("current_named_users"))
+            )
+      )
+
+    ),
+    tabPanel(
+      title = "Historical Named User Details",
+      fluidRow(
+        box("Licensed Named Users",
+                           girafeOutput("plot_NU_interactive")))
+    ),
+    tabPanel(
+      title = "Historical User Additions",
 
       fluidRow(
         box("All Time User Additions to Server/Cluster",
@@ -188,12 +205,6 @@ ui <-
             girafeOutput("plot_role_interactive"))
       )
 
-    ),
-    tabPanel(
-      title = "Licensed User Details",
-      fluidRow(
-        box("Licensed Named Users",
-                           girafeOutput("plot_NU_interactive")))
     )
     ), #end navbarPage
   tags$footer(paste("Data sourced from:",pin_freshness_str), class = "footer")
@@ -230,6 +241,13 @@ server <- function(input, output) {
       valueBox(subtitle = "Viewers")
   })
 
+  output$current_named_users <- renderReactable({
+    reactable(current_users %>%
+                select(last_name, first_name, username, email, user_role, guid, days_since_active) %>%
+                arrange(last_name),
+              highlight = TRUE, sortable=TRUE, resizable = TRUE, filterable = TRUE, searchable = TRUE,
+              showPageSizeOptions = TRUE, defaultPageSize = 15) })
+
 
   output$plot_historical <- renderPlot({plot_historical})
 
@@ -244,6 +262,19 @@ server <- function(input, output) {
 
   output$plot_NU_interactive <- renderGirafe({girafe(ggobj = plot_NU)})
 
+  ##download csv of named user data
+  data <- current_users %>%
+    select(last_name, first_name, username, email, user_role, guid, days_since_active) %>%
+    arrange(last_name)
+
+  output$downloadData <- downloadHandler(
+    filename = function() {
+      paste("data-connect-nu-", Sys.Date(), ".csv", sep="")
+    },
+    content = function(file) {
+      write.csv(data, file)
+    }
+  )
 
 }
 
