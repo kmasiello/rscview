@@ -1,0 +1,343 @@
+{
+  "version": 1,
+  "locale": "en_US",
+  "platform": "4.0.2",
+  "metadata": {
+    "appmode": "static",
+    "primary_rmd": null,
+    "primary_html": "inst/acl-report/acl-report.html",
+    "content_category": null,
+    "has_parameters": false
+  },
+  "packages": null,
+  "files": {
+    ".Rbuildignore": {
+      "checksum": "23003f874a7766f6aa02960a8912198d"
+    },
+    ".Rhistory (1)": {
+      "checksum": "5892c1ff83e180e7ab3f52a0c631088f"
+    },
+    "DESCRIPTION": {
+      "checksum": "ed1a032872a87cbd4985c756e222900b"
+    },
+    "inst/.DS_Store": {
+      "checksum": "947c18ad3012a2f916b5d96a1f5492a6"
+    },
+    "inst/acl-report/acl-report.html": {
+      "checksum": "b6aa691f03afc5d4d3c53324c973a202"
+    },
+    "inst/acl-report/acl-report.Rmd": {
+      "checksum": "500ef55aa7876fd17f569136d544b3ad"
+    },
+    "inst/acl-report/custom.css": {
+      "checksum": "4ce06ff9166e9e54191b3c4498aeae8d"
+    },
+    "inst/audit-logs/audit-log.Rmd": {
+      "checksum": "e6e4d3e90c02213f2c95e48e166ca450"
+    },
+    "inst/basic-content/.DS_Store": {
+      "checksum": "194577a7e20bdcc7afbb718f502c134c"
+    },
+    "inst/basic-content/basic-content-audit.Rmd": {
+      "checksum": "e72a12929ddd25e9b5e736deb3f3598c"
+    },
+    "inst/basic-content/content_2021-06-14.rds": {
+      "checksum": "8d1bd1868e73f836b8d11627584e95bf"
+    },
+    "inst/basic-content/content-audit-email.Rmd": {
+      "checksum": "9b82639d8936c0153559c905eaba19c2"
+    },
+    "inst/basic-content/content-report.Rmd": {
+      "checksum": "f0f1592222db5c4642d69038406c0b84"
+    },
+    "inst/basic-content/custom.css": {
+      "checksum": "4ce06ff9166e9e54191b3c4498aeae8d"
+    },
+    "inst/basic-content/flexdashboard-basic-content-audit.html": {
+      "checksum": "0e7881474e3da8164540bc294b3ab34a"
+    },
+    "inst/basic-content/flexdashboard-basic-content-audit.Rmd": {
+      "checksum": "b08e04e8630d7aafb0fd665132a6179f"
+    },
+    "inst/generatePins/.gitignore": {
+      "checksum": "126e0c1a7512a032f8d16f03a50484b0"
+    },
+    "inst/generatePins/generatePins.Rmd": {
+      "checksum": "b482d61e8eeeeb3c77bc21b20ca1975a"
+    },
+    "inst/generatePins/manifest.json": {
+      "checksum": "47d764d9b7fb5a8e7ab49ed08a45c0f7"
+    },
+    "inst/generatePins/pin-audit-log.Rmd": {
+      "checksum": "2f7287cb0554c1fefc2d258f51e6972d"
+    },
+    "inst/generatePins/pin-content-list.Rmd": {
+      "checksum": "ef434ba849e8a1185c506d3f0a63eacd"
+    },
+    "inst/generatePins/pin-group-list.Rmd": {
+      "checksum": "b0c42b9d0facec1c2bc782ba558dff03"
+    },
+    "inst/generatePins/pin-instrumentation-data.Rmd": {
+      "checksum": "c7faee0de72b4da99b1e727a2a5e979b"
+    },
+    "inst/generatePins/pin-users-groups.Rmd": {
+      "checksum": "3e2340541614374ff49699c12182817f"
+    },
+    "inst/generatePins/rsconnect/documents/generatePins.Rmd/colorado.rstudio.com/katie/generatepins.dcf": {
+      "checksum": "f3369787e0999a4cd39f53fffb701a82"
+    },
+    "inst/generatePins/rsconnect/documents/generatePins.Rmd/colorado.rstudio.com/katie/generatepins2.dcf": {
+      "checksum": "d4e954ec5b68a9fb25bea2f443ffb8d5"
+    },
+    "inst/generatePins/rsconnect/documents/pin-audit-log.Rmd/colorado.rstudio.com/katie/.DS_Store": {
+      "checksum": "194577a7e20bdcc7afbb718f502c134c"
+    },
+    "inst/generatePins/rsconnect/documents/pin-audit-log.Rmd/colorado.rstudio.com/katie/pin-audit-log.dcf": {
+      "checksum": "07c15eb65d196f3470261c76557eb0a5"
+    },
+    "inst/generatePins/rsconnect/documents/pin-content-list.Rmd/colorado.rstudio.com/katie/pin-content-list.dcf": {
+      "checksum": "0cf9bb082589e0c18b6610ef41351b4b"
+    },
+    "inst/generatePins/rsconnect/documents/pin-group-list.Rmd/colorado.rstudio.com/katie/pin-group-list.dcf": {
+      "checksum": "61471eaf11c71116984fbdc829c97588"
+    },
+    "inst/generatePins/rsconnect/documents/pin-instrumentation-data.Rmd/colorado.rstudio.com/katie/pin-instrumentation-data.dcf": {
+      "checksum": "bf41a8f1a015f5be9ac9d3b1b8033dd6"
+    },
+    "inst/generatePins/rsconnect/documents/pin-instrumentation-data.Rmd/colorado.rstudio.com/katie/pin-instrumentation-data2.dcf": {
+      "checksum": "e4ed03eb2b99af1a3a08e92713ce13cb"
+    },
+    "inst/generatePins/rsconnect/documents/pin-instrumentation-data.Rmd/colorado.rstudio.com/katie/pin-instrumentation-data3.dcf": {
+      "checksum": "9b3b57142953a143302df576cbf7bc65"
+    },
+    "inst/generatePins/rsconnect/documents/pin-instrumentation-data.Rmd/colorado.rstudio.com/katie/pin-instrumentation-data4.dcf": {
+      "checksum": "80a7d92b8c74d88bbff4170962c7c6bc"
+    },
+    "inst/generatePins/rsconnect/documents/pin-users-groups.Rmd/colorado.rstudio.com/katie/pin-users-groups.dcf": {
+      "checksum": "bb3307781fb9a1a42cfb0304828f97d4"
+    },
+    "inst/generatePins/tobedeleted/acl-pin-generator.Rmd": {
+      "checksum": "1cf90f4943f82d06c547b38a10ae2929"
+    },
+    "inst/generatePins/tobedeleted/generatePins_wAPI.Rmd": {
+      "checksum": "3eee28b15fb269def170bbc8e5b55f84"
+    },
+    "inst/generatePins/tobedeleted/generatePins.html": {
+      "checksum": "cffe5c4e42eac66c27792b95d8713afd"
+    },
+    "inst/generatePins/tobedeleted/pin-content-list.html": {
+      "checksum": "af5d0f34aaa37dedf92e58a20b438fac"
+    },
+    "inst/group-report/.DS_Store": {
+      "checksum": "194577a7e20bdcc7afbb718f502c134c"
+    },
+    "inst/group-report/.gitignore": {
+      "checksum": "126e0c1a7512a032f8d16f03a50484b0"
+    },
+    "inst/group-report/app.R": {
+      "checksum": "309ce5c4c4964f4d8bed33feb7eeb6db"
+    },
+    "inst/group-report/deleteme/group-report.html": {
+      "checksum": "0e8e8745d68655e018d6235bb6f38c97"
+    },
+    "inst/group-report/deleteme/group-report.Rmd": {
+      "checksum": "b87ded8aa400325d885c2820fe1e8242"
+    },
+    "inst/group-report/deleteme/manifest.json": {
+      "checksum": "2a8506ba041a0af500b8bf18135e8c1f"
+    },
+    "inst/group-report/rsconnect/colorado.rstudio.com/katie/group-report.dcf": {
+      "checksum": "5eb08862746d52d7cff592575a98302e"
+    },
+    "inst/group-report/rsconnect/colorado.rstudio.com/katie/group-server-audit-dashboard.dcf": {
+      "checksum": "1e20644d326d815742a70693878f78ce"
+    },
+    "inst/group-report/www/.DS_Store": {
+      "checksum": "194577a7e20bdcc7afbb718f502c134c"
+    },
+    "inst/group-report/www/custom.css": {
+      "checksum": "eed1404ae0d63b70e59aedebd013a599"
+    },
+    "inst/landing-page/landing-page.Rmd": {
+      "checksum": "4d023851e9a0175864dc96a6730c50ed"
+    },
+    "inst/usage-report/.gitignore": {
+      "checksum": "6900ad393088518c11ebc8be606bb70c"
+    },
+    "inst/usage-report/content_2021-06-14.rds": {
+      "checksum": "8d1bd1868e73f836b8d11627584e95bf"
+    },
+    "inst/usage-report/content_2021-07-23.rds": {
+      "checksum": "a7aa937f56bfe50a8787da3d6d5bcaef"
+    },
+    "inst/usage-report/custom.css": {
+      "checksum": "4ce06ff9166e9e54191b3c4498aeae8d"
+    },
+    "inst/usage-report/data.rds": {
+      "checksum": "c45219a8bc4e62012d14d6601149bf15"
+    },
+    "inst/usage-report/get_instrumentation.R": {
+      "checksum": "4229494e7f8f2b1c7e95ee87d85d6a18"
+    },
+    "inst/usage-report/shiny_2021-06-14.rds": {
+      "checksum": "18c6506d9a9c045c0074c7d22bbda0a7"
+    },
+    "inst/usage-report/static_2021-06-14.rds": {
+      "checksum": "63a68cfcd4b5985e3db80b02fe22f9e3"
+    },
+    "inst/usage-report/usage-report.html": {
+      "checksum": "fd28d182e1abf5a4acc9a1341453739e"
+    },
+    "inst/usage-report/usage-report.Rmd": {
+      "checksum": "17b75531eae0289ce52e1336690f691d"
+    },
+    "inst/user-report/.DS_Store": {
+      "checksum": "194577a7e20bdcc7afbb718f502c134c"
+    },
+    "inst/user-report/.gitignore": {
+      "checksum": "36f82713c228dce8fb3393ff477f3290"
+    },
+    "inst/user-report/app.R": {
+      "checksum": "5013c9e5dcd435a28b51e93b5c54f10e"
+    },
+    "inst/user-report/custom.css": {
+      "checksum": "4ce06ff9166e9e54191b3c4498aeae8d"
+    },
+    "inst/user-report/manifest.json": {
+      "checksum": "4c5fc82b0b946b70b0a0c0e29ae15c46"
+    },
+    "inst/user-report/rsconnect/colorado.rstudio.com/katie/interactive-user-report.dcf": {
+      "checksum": "47c40672f90738544ac93a3585cce100"
+    },
+    "inst/user-report/rsconnect/colorado.rstudio.com/katie/user-report.dcf": {
+      "checksum": "fce37b94df9079ddff90ea2aae370e26"
+    },
+    "inst/user-report/testapp/app.R": {
+      "checksum": "94c73e779bd60a9f1f0ae35294d9f807"
+    },
+    "inst/user-report/user-report.html": {
+      "checksum": "232aa081f193e49079c04baf87ae00be"
+    },
+    "inst/user-report/user-report.Rmd": {
+      "checksum": "df4c520e5859914910cf8268409b3a25"
+    },
+    "inst/user-report/www/.DS_Store": {
+      "checksum": "194577a7e20bdcc7afbb718f502c134c"
+    },
+    "inst/user-report/www/custom.css": {
+      "checksum": "eed1404ae0d63b70e59aedebd013a599"
+    },
+    "LICENSE": {
+      "checksum": "7c6d8a733df981ccce41ee6f0c81f656"
+    },
+    "LICENSE.md": {
+      "checksum": "edf2ce1c6b4dee29358afdd5b083e9a9"
+    },
+    "man/.DS_Store": {
+      "checksum": "194577a7e20bdcc7afbb718f502c134c"
+    },
+    "man/check_envvars.Rd": {
+      "checksum": "d4871310ee9bf1ae4d4da729276133da"
+    },
+    "man/create_connection.Rd": {
+      "checksum": "0e6b79bd4e0897cfee0bdd531865d40e"
+    },
+    "man/create_pin.Rd": {
+      "checksum": "d99ae18e21552763d7603bfc35ce488f"
+    },
+    "man/create_tag_pin.Rd": {
+      "checksum": "cd2ba71e2ae960ad6ae74b937b9e1292"
+    },
+    "man/get_content_tbl.Rd": {
+      "checksum": "511f53b553c391313c6b25e4743a67ae"
+    },
+    "man/get_group_members_tbl.Rd": {
+      "checksum": "ba164fb037ac309d969d953bc6eee9bd"
+    },
+    "man/get_group_names.Rd": {
+      "checksum": "2cfa50c1f2a3c69eb95f273f2e430f8a"
+    },
+    "man/get_groups_summary.Rd": {
+      "checksum": "d8c173d1945d1b8d2786959880b93b0a"
+    },
+    "man/get_lock_history_tbl.Rd": {
+      "checksum": "1e543da972cd53a86d590996fa9b6ba7"
+    },
+    "man/get_user_current_tbl.Rd": {
+      "checksum": "c1d1181fe89f4eb2190be4f24f9770ae"
+    },
+    "man/get_user_historical_tbl.Rd": {
+      "checksum": "4a4ff3e9960ef87e9184e0cd88e0d742"
+    },
+    "man/get_users_daysback.Rd": {
+      "checksum": "ebdb5aa86c4dfe0de0447739b8d550b8"
+    },
+    "man/get_users_role.Rd": {
+      "checksum": "2870c27b1d5e875b20362173616b7aef"
+    },
+    "man/get_users_tbl.Rd": {
+      "checksum": "420bec4e0357b44bf45c22b23a453f20"
+    },
+    "man/make_group_members_tbl.Rd": {
+      "checksum": "88b57ac0b4772935968ce2a5c4b0ee8e"
+    },
+    "man/pin_freshness_str.Rd": {
+      "checksum": "6b8f7be6bad6639c90a0ab7afe3fd9a6"
+    },
+    "man/pin_freshness_tbl.Rd": {
+      "checksum": "c84a62c3767aff67cc891fc4663f6c8a"
+    },
+    "man/pipe.Rd": {
+      "checksum": "8f4aad003a999fae004ba9361f9a99d6"
+    },
+    "NAMESPACE": {
+      "checksum": "7de0377ab318de0d704b81ef08792135"
+    },
+    "R/.DS_Store": {
+      "checksum": "85620a314ecfab069a582803271e0296"
+    },
+    "R/check_envvars.r": {
+      "checksum": "2741dd3466204bc89c8e4f1696e59fbd"
+    },
+    "R/create_connection.R": {
+      "checksum": "7d6d03150dd1ae2560def94bf7d7cdf0"
+    },
+    "R/create_pin.R": {
+      "checksum": "2a03d424499f99334372d6d8e20c637e"
+    },
+    "R/create_tag_pin.R": {
+      "checksum": "559b9c5ef248949a1d1a6c72a737410c"
+    },
+    "R/get_content_tbl.R": {
+      "checksum": "57d305426a9e027510f5d9ab244f5540"
+    },
+    "R/get_groups_tbl.R": {
+      "checksum": "f871b581064f4c45517f0e6eb11d311e"
+    },
+    "R/get_lock_history_tbl.R": {
+      "checksum": "f1a19b825d39d7bd95ce6794478f45c8"
+    },
+    "R/get_user_current_tbl.R": {
+      "checksum": "4ad2c8e0162b5fdfb2801d1fa078676d"
+    },
+    "R/get_user_historical_tbl.R": {
+      "checksum": "1badcc0f1660419b50790be1e278996b"
+    },
+    "R/get_users_daysback.R": {
+      "checksum": "c75ee3b53eae14d0f07dc4a2acf7d4d5"
+    },
+    "R/get_users_role.R": {
+      "checksum": "f8e499faa2a96bee5330af8bea407f1f"
+    },
+    "R/pin_freshness.R": {
+      "checksum": "689dafd9789da0a8c09ae4652a5575f9"
+    },
+    "R/utils-pipe.R": {
+      "checksum": "b56ff2b193ecba52f9ec7f3b10cca008"
+    },
+    "readme.md": {
+      "checksum": "dca48194d24354fd8fda580fd04e57e6"
+    }
+  },
+  "users": null
+}
