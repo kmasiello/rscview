@@ -2549,17 +2549,17 @@
       }
     },
     "pins": {
-      "Source": "github",
-      "Repository": null,
-      "GithubRepo": "pins",
-      "GithubUsername": "rstudio",
-      "GithubRef": "HEAD",
-      "GithubSha1": "1e6f986ce3d42244ed0251c0710fede5ec25f020",
+      "Source": "CRAN",
+      "Repository": "https://packagemanager.rstudio.com/all/latest/",
+      "GithubRepo": null,
+      "GithubUsername": null,
+      "GithubRef": null,
+      "GithubSha1": null,
       "description": {
         "Type": "Package",
         "Package": "pins",
         "Title": "Pin, Discover and Share Resources",
-        "Version": "1.0.0.9000",
+        "Version": "1.0.1",
         "Authors@R": "c(\n    person(\"Hadley\", \"Wickham\", , \"hadley@rstudio.com\", role = c(\"aut\", \"cre\"),\n           comment = c(ORCID = \"0000-0003-4757-117X\")),\n    person(\"Javier\", \"Luraschi\", , \"jluraschi@gmail.com\", role = \"aut\"),\n    person(, \"RStudio\", role = \"cph\")\n  )",
         "Description": "Publish data sets, models, and other R objects, making it\n    easy to share them across projects and with your colleagues. You can\n    pin objects to a variety of \"boards\", including local folders (to\n    share on a networked drive or with 'DropBox'), 'RStudio' connect,\n    Amazon S3, and more.",
         "License": "Apache License (>= 2)",
@@ -2567,27 +2567,18 @@
         "BugReports": "https://github.com/rstudio/pins/issues",
         "Depends": "R (>= 3.3.0)",
         "Imports": "arrow, cli, digest, ellipsis, filelock, fs, glue, httr,\njsonlite, lifecycle, magrittr, mime, openssl, rappdirs, rlang\n(>= 0.4.10), tibble, whisker, withr, yaml, zip",
-        "Suggests": "AzureStor, data.table, datasets, knitr, Microsoft365R,\nmockery, paws.storage, qs, R.utils, rmarkdown, rsconnect,\nshiny, testthat (>= 3.0.0), xml2",
+        "Suggests": "AzureStor, data.table, datasets, gitcreds, knitr,\nMicrosoft365R, mockery, paws.storage, qs, R.utils, rmarkdown,\nrsconnect, shiny, testthat (>= 3.0.0), xml2",
         "VignetteBuilder": "knitr",
         "Config/testthat/edition": "3",
         "Encoding": "UTF-8",
-        "Roxygen": "list(markdown = TRUE)",
         "RoxygenNote": "7.1.2",
-        "RemoteType": "github",
-        "RemoteHost": "api.github.com",
-        "RemoteRepo": "pins",
-        "RemoteUsername": "rstudio",
-        "RemoteRef": "HEAD",
-        "RemoteSha": "1e6f986ce3d42244ed0251c0710fede5ec25f020",
-        "GithubRepo": "pins",
-        "GithubUsername": "rstudio",
-        "GithubRef": "HEAD",
-        "GithubSHA1": "1e6f986ce3d42244ed0251c0710fede5ec25f020",
         "NeedsCompilation": "no",
-        "Packaged": "2021-12-10 21:18:34 UTC; katie",
+        "Packaged": "2021-12-14 18:45:36 UTC; hadleywickham",
         "Author": "Hadley Wickham [aut, cre] (<https://orcid.org/0000-0003-4757-117X>),\n  Javier Luraschi [aut],\n  RStudio [cph]",
         "Maintainer": "Hadley Wickham <hadley@rstudio.com>",
-        "Built": "R 4.0.2; ; 2021-12-10 21:18:34 UTC; unix"
+        "Repository": "RSPM",
+        "Date/Publication": "2021-12-15 12:10:02 UTC",
+        "Built": "R 4.0.2; ; 2021-12-17 21:45:32 UTC; unix"
       }
     },
     "pkgconfig": {
@@ -2867,17 +2858,17 @@
       }
     },
     "reactable": {
-      "Source": "CRAN",
-      "Repository": "https://packagemanager.rstudio.com/all/latest/",
-      "GithubRepo": null,
-      "GithubUsername": null,
-      "GithubRef": null,
-      "GithubSha1": null,
+      "Source": "github",
+      "Repository": null,
+      "GithubRepo": "reactable",
+      "GithubUsername": "glin",
+      "GithubRef": "HEAD",
+      "GithubSha1": "fd5b995efc1e8bc0d4a09d1d5cf580ebdd301cf7",
       "description": {
         "Package": "reactable",
         "Type": "Package",
         "Title": "Interactive Data Tables Based on 'React Table'",
-        "Version": "0.2.3",
+        "Version": "0.2.3.9000",
         "Authors@R": "c(\n    person(\"Greg\", \"Lin\", email = \"glin@glin.io\", role = c(\"aut\", \"cre\")),\n    person(\"Tanner\", \"Linsley\", role = c(\"ctb\", \"cph\"), comment = \"React Table library\"),\n    person(family = \"Emotion team and other contributors\", role = c(\"ctb\", \"cph\"),\n           comment = \"Emotion library\")\n    )",
         "Description": "Interactive data tables for R, based on the 'React Table'\n    JavaScript library. Provides an HTML widget that can be used in 'R Markdown'\n    documents and 'Shiny' applications, or viewed from an R console.",
         "License": "MIT + file LICENSE",
@@ -2885,17 +2876,26 @@
         "BugReports": "https://github.com/glin/reactable/issues",
         "Depends": "R (>= 3.1)",
         "Imports": "digest, htmltools, htmlwidgets, jsonlite, reactR",
-        "Suggests": "covr, crosstalk, dplyr, leaflet, MASS, rmarkdown, shiny,\nsparkline, testthat",
+        "Suggests": "covr, crosstalk, dplyr, fontawesome, leaflet, MASS,\nrmarkdown, shiny, sparkline, testthat, tippy",
         "Encoding": "UTF-8",
         "LazyData": "true",
+        "Roxygen": "list(markdown = TRUE)",
         "RoxygenNote": "7.1.1",
+        "RemoteType": "github",
+        "RemoteHost": "api.github.com",
+        "RemoteRepo": "reactable",
+        "RemoteUsername": "glin",
+        "RemoteRef": "HEAD",
+        "RemoteSha": "fd5b995efc1e8bc0d4a09d1d5cf580ebdd301cf7",
+        "GithubRepo": "reactable",
+        "GithubUsername": "glin",
+        "GithubRef": "HEAD",
+        "GithubSHA1": "fd5b995efc1e8bc0d4a09d1d5cf580ebdd301cf7",
         "NeedsCompilation": "no",
-        "Packaged": "2020-10-04 21:31:55 UTC; greg",
+        "Packaged": "2021-12-17 17:16:00 UTC; katie",
         "Author": "Greg Lin [aut, cre],\n  Tanner Linsley [ctb, cph] (React Table library),\n  Emotion team and other contributors [ctb, cph] (Emotion library)",
         "Maintainer": "Greg Lin <glin@glin.io>",
-        "Repository": "RSPM",
-        "Date/Publication": "2020-10-04 21:50:02 UTC",
-        "Built": "R 4.0.2; ; 2021-03-08 05:50:26 UTC; unix"
+        "Built": "R 4.0.2; ; 2021-12-17 17:16:01 UTC; unix"
       }
     },
     "readr": {
@@ -3448,6 +3448,68 @@
         "Built": "R 4.0.2; ; 2021-11-05 03:24:13 UTC; unix"
       }
     },
+    "showtext": {
+      "Source": "CRAN",
+      "Repository": "https://packagemanager.rstudio.com/all/latest/",
+      "GithubRepo": null,
+      "GithubUsername": null,
+      "GithubRef": null,
+      "GithubSha1": null,
+      "description": {
+        "Package": "showtext",
+        "Type": "Package",
+        "Title": "Using Fonts More Easily in R Graphs",
+        "Version": "0.9-4",
+        "Date": "2021-08-13",
+        "Author": "Yixuan Qiu and authors/contributors of the\n    included software. See file AUTHORS for details.",
+        "Maintainer": "Yixuan Qiu <yixuan.qiu@cos.name>",
+        "Description": "Making it easy to use various types of fonts ('TrueType',\n    'OpenType', Type 1, web fonts, etc.) in R graphs, and supporting most output\n    formats of R graphics including PNG, PDF and SVG. Text glyphs will be converted\n    into polygons or raster images, hence after the plot has been created, it no\n    longer relies on the font files. No external software such as 'Ghostscript' is\n    needed to use this package.",
+        "Depends": "sysfonts (>= 0.7.1), showtextdb (>= 2.0)",
+        "Imports": "grDevices",
+        "Suggests": "knitr, rmarkdown, prettydoc, curl, jsonlite",
+        "SystemRequirements": "zlib, libpng, FreeType",
+        "URL": "https://github.com/yixuan/showtext",
+        "BugReports": "https://github.com/yixuan/showtext/issues",
+        "License": "Apache License (>= 2.0)",
+        "Copyright": "see file COPYRIGHTS",
+        "VignetteBuilder": "knitr, rmarkdown",
+        "RoxygenNote": "7.1.1",
+        "NeedsCompilation": "yes",
+        "Packaged": "2021-08-14 05:24:41 UTC; qyx",
+        "Repository": "RSPM",
+        "Date/Publication": "2021-08-14 09:20:02 UTC",
+        "Encoding": "UTF-8",
+        "Built": "R 4.0.2; x86_64-apple-darwin17.0; 2021-12-11 01:44:52 UTC; unix"
+      }
+    },
+    "showtextdb": {
+      "Source": "CRAN",
+      "Repository": "https://packagemanager.rstudio.com/all/latest/",
+      "GithubRepo": null,
+      "GithubUsername": null,
+      "GithubRef": null,
+      "GithubSha1": null,
+      "description": {
+        "Package": "showtextdb",
+        "Type": "Package",
+        "Title": "Font Files for the 'showtext' Package",
+        "Version": "3.0",
+        "Date": "2020-05-31",
+        "Author": "Yixuan Qiu and authors/contributors of the included fonts. See file\n    AUTHORS for details.",
+        "Maintainer": "Yixuan Qiu <yixuan.qiu@cos.name>",
+        "Description": "Providing font files that can be used by the 'showtext' package.",
+        "Imports": "sysfonts (>= 0.7), utils",
+        "Suggests": "curl",
+        "License": "Apache License (>= 2.0)",
+        "Copyright": "see file COPYRIGHTS",
+        "RoxygenNote": "7.1.0",
+        "NeedsCompilation": "no",
+        "Packaged": "2020-06-04 04:05:01 UTC; qyx",
+        "Repository": "CRAN",
+        "Date/Publication": "2020-06-04 08:10:02 UTC",
+        "Built": "R 4.0.2; ; 2020-07-15 21:50:30 UTC; unix"
+      }
+    },
     "sourcetools": {
       "Source": "CRAN",
       "Repository": "https://packagemanager.rstudio.com/all/latest/",
@@ -3573,6 +3635,37 @@
         "Built": "R 4.0.2; x86_64-apple-darwin17.0; 2020-07-24 10:21:52 UTC; unix"
       }
     },
+    "sysfonts": {
+      "Source": "CRAN",
+      "Repository": "https://packagemanager.rstudio.com/all/latest/",
+      "GithubRepo": null,
+      "GithubUsername": null,
+      "GithubRef": null,
+      "GithubSha1": null,
+      "description": {
+        "Package": "sysfonts",
+        "Type": "Package",
+        "Title": "Loading Fonts into R",
+        "Version": "0.8.5",
+        "Date": "2021-08-09",
+        "Author": "Yixuan Qiu and authors/contributors of the\n    included fonts. See file AUTHORS for details.",
+        "Maintainer": "Yixuan Qiu <yixuan.qiu@cos.name>",
+        "Description": "Loading system fonts and Google Fonts\n    <https://fonts.google.com/> into R, in order to\n    support other packages such as 'R2SWF' and 'showtext'.",
+        "Suggests": "curl, jsonlite",
+        "Copyright": "see file COPYRIGHTS",
+        "SystemRequirements": "zlib, libpng, FreeType",
+        "URL": "https://github.com/yixuan/sysfonts",
+        "BugReports": "https://github.com/yixuan/sysfonts/issues",
+        "License": "GPL-2",
+        "RoxygenNote": "7.1.1",
+        "NeedsCompilation": "yes",
+        "Packaged": "2021-08-09 10:42:09 UTC; qyx",
+        "Repository": "RSPM",
+        "Date/Publication": "2021-08-09 13:40:02 UTC",
+        "Encoding": "UTF-8",
+        "Built": "R 4.0.2; x86_64-apple-darwin17.0; 2021-10-01 19:02:00 UTC; unix"
+      }
+    },
     "systemfonts": {
       "Source": "CRAN",
       "Repository": "https://packagemanager.rstudio.com/all/latest/",
@@ -3604,6 +3697,48 @@
         "Repository": "RSPM",
         "Date/Publication": "2021-05-11 12:10:05 UTC",
         "Built": "R 4.0.2; x86_64-apple-darwin17.0; 2021-10-01 19:02:03 UTC; unix"
+      }
+    },
+    "thematic": {
+      "Source": "github",
+      "Repository": null,
+      "GithubRepo": "thematic",
+      "GithubUsername": "rstudio",
+      "GithubRef": "HEAD",
+      "GithubSha1": "dc79f6de94bc7e3d36056b5664b3352dc771be08",
+      "description": {
+        "Package": "thematic",
+        "Title": "Unified and Automatic 'Theming' of 'ggplot2', 'lattice', and\n'base' R Graphics",
+        "Version": "0.1.2.9000",
+        "Authors@R": "c(\n  person(\"Carson\", \"Sievert\", role = c(\"aut\", \"cre\"), email = \"carson@rstudio.com\", comment = c(ORCID = \"0000-0002-4958-2844\")),\n  person(\"Barret\", \"Schloerke\", email = \"barret@rstudio.com\", role = \"aut\", comment = c(ORCID = \"0000-0001-9986-114X\")),\n  person(\"Joe\", \"Cheng\", role = \"aut\", email = \"joe@rstudio.com\"),\n  person(family = \"RStudio\", role = \"cph\")\n  )",
+        "Description": "\n  Theme 'ggplot2', 'lattice', and 'base' graphics based on a few choices, including foreground color, background color, accent color,\n  and font family. Fonts that aren't available on the system, but are available via download on 'Google Fonts',\n  can be automatically downloaded, cached, and registered for use with the 'showtext' and 'ragg' packages.",
+        "URL": "https://rstudio.github.io/thematic/,\nhttps://github.com/rstudio/thematic#readme",
+        "Depends": "R (>= 3.0.0)",
+        "Imports": "utils, graphics, grDevices, grid, farver, rlang, scales,\nrstudioapi (>= 0.8), rappdirs, ggplot2 (>= 3.3.0)",
+        "Suggests": "lattice, stats, withr, sysfonts, showtext, Cairo,\nsystemfonts, ragg, knitr, rmarkdown, htmltools, shiny (>=\n1.5.0), bslib, testthat, gganimate, ggiraph, vdiffr (>= 1.0.0),\nsvglite, jsonlite, curl",
+        "License": "MIT + file LICENSE",
+        "Encoding": "UTF-8",
+        "Roxygen": "list(markdown = TRUE)",
+        "RoxygenNote": "7.1.2",
+        "Collate": "'auto.R' 'base.R' 'cache.R' 'gfonts.R' 'ggplot.R' 'globals.R'\n'hooks.R' 'imports.R' 'knitr.R' 'lattice.R' 'onLoad.R'\n'thematic-save-plot.R' 'thematic.R' 'utils.R'\n'view-shinytest.R'",
+        "Config/Needs/routine": "ggrepel",
+        "Config/Needs/website": "GGally, RColorBrewer, patchwork, apreshill/quillt",
+        "Config/Needs/check": "shinytest, callr, sf, ggthemes, patchwork,\ngridExtra, tinytex, devtools, rversions",
+        "RemoteType": "github",
+        "RemoteHost": "api.github.com",
+        "RemoteRepo": "thematic",
+        "RemoteUsername": "rstudio",
+        "RemoteRef": "HEAD",
+        "RemoteSha": "dc79f6de94bc7e3d36056b5664b3352dc771be08",
+        "GithubRepo": "thematic",
+        "GithubUsername": "rstudio",
+        "GithubRef": "HEAD",
+        "GithubSHA1": "dc79f6de94bc7e3d36056b5664b3352dc771be08",
+        "NeedsCompilation": "no",
+        "Packaged": "2021-12-17 21:38:01 UTC; katie",
+        "Author": "Carson Sievert [aut, cre] (<https://orcid.org/0000-0002-4958-2844>),\n  Barret Schloerke [aut] (<https://orcid.org/0000-0001-9986-114X>),\n  Joe Cheng [aut],\n  RStudio [cph]",
+        "Maintainer": "Carson Sievert <carson@rstudio.com>",
+        "Built": "R 4.0.2; ; 2021-12-17 21:38:02 UTC; unix"
       }
     },
     "tibble": {
@@ -4169,28 +4304,13 @@
   },
   "files": {
     "app.R": {
-      "checksum": "df43f2627fd49acbc1303528527c6b65"
-    },
-    "current_users.csv": {
-      "checksum": "4d8be19792322301b5913ea4c6141602"
+      "checksum": "bb0894e821daa857f3a357edfbeee2d2"
     },
     "custom.css": {
       "checksum": "4ce06ff9166e9e54191b3c4498aeae8d"
     },
-    "event_history.csv": {
-      "checksum": "8f8e3b1a49a9657f51ef1a4cb081add7"
-    },
-    "get_logs.R": {
-      "checksum": "16f2faf7c2d3db7750c2b74979e571c9"
-    },
-    "logs_2021-06-03.rds": {
-      "checksum": "f581ce223554eceaaa6da70ac5666ce2"
-    },
-    "logs_2021-07-02.rds": {
-      "checksum": "27ba137215e28d9b502a1c9d486baaa7"
-    },
-    "logs.rds": {
-      "checksum": "db7990e2ba0a26fdacde98a04fb8a5f5"
+    "testapp/app.R": {
+      "checksum": "94c73e779bd60a9f1f0ae35294d9f807"
     },
     "user-report.html": {
       "checksum": "232aa081f193e49079c04baf87ae00be"
