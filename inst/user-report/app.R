@@ -194,7 +194,7 @@ ui <-
     tabPanel(
       title = "Historical Named User Details",
       fluidRow(
-        box("Licensed Named Users",
+        box("Licensed Named Users", width = 10,
                            girafeOutput("plot_NU_interactive")))
     ),
     tabPanel(
