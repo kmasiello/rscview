@@ -16,8 +16,8 @@ Scan content with the "Server Audit" tag and send an email alert if anything is 
 library(connectapi)
 library(blastula)
 library(dplyr)
-library(rscview)
-# library(connectwidgets)
+library(gt)
+library(purrr)
 ```
 
 
