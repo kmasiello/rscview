@@ -1,0 +1,18 @@
+---
+title: "alert_access_email"
+output: blastula::blastula_email
+---
+## Access Alert
+
+The following content tagged with `r tagname` has been set to an access permission of "All":
+
+```{r}
+library(gt)
+library(purrr)
+
+access_all %>% mutate(content_url = map(content_url, ~htmltools::a(href = .x, as.character(.x))), 
+                          content_url = map(content_url, ~gt::html(as.character(.x)))) %>% gt()
+
+
+```
+

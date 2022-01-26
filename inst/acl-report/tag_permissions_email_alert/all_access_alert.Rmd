@@ -1,0 +1,56 @@
+---
+title: "Audit tools access report"
+author: "Katie Masiello"
+date: "1/26/2022"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Purpose
+Scan content with the "Server Audit" tag and send an email alert if anything is set to access "Anyone - no log in required."
+
+```{r}
+library(connectapi)
+library(blastula)
+library(dplyr)
+library(rscview)
+# library(connectwidgets)
+```
+
+```{r}
+client <- connect()
+
+content_tbl <- get_content(client)
+
+by_tag <- function(content, tagname) {
+  tagname <- as.list(tagname)
+  content %>% dplyr::filter(purrr::map_lgl(content$tags, function(x) {
+    any(tagname %in% x$name)
+  }))
+}
+
+tagname = "Server Audit"
+
+#items with tag = Server Audit
+audit_items <- content_tbl %>% by_tag(tagname)
+
+access_all <- audit_items %>% filter(access_type == "all") %>% select(guid, name, title, description, content_url)
+
+```
+
+# Email if access = all
+```{r}
+
+if(nrow(access_all) == 0){
+  suppress_scheduled_email()
+} else {
+  render_connect_email("alert_access_email.rmd") %>%
+    attach_connect_email(subject = "Alert: Access Permissions on Server Audit")
+}
+
+```
+
+
