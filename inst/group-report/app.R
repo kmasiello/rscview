@@ -84,7 +84,7 @@ server <- function(input, output) {
 
   output$groups_summary <- renderReactable({
     reactable(groups_summary, selection = "single", onClick = "select", highlight = TRUE,
-              showPageSizeOptions = TRUE, defaultPageSize = 15)
+              showPageSizeOptions = TRUE, defaultPageSize = 15, searchable = TRUE)
   })
 
   output$users_in_group_tbl <- renderReactable({
