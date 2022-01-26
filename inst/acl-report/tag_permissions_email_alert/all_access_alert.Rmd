@@ -20,6 +20,8 @@ library(rscview)
 # library(connectwidgets)
 ```
 
+
+## Pull Content, filter by tag and access = all
 ```{r}
 client <- connect()
 
@@ -40,6 +42,14 @@ audit_items <- content_tbl %>% by_tag(tagname)
 access_all <- audit_items %>% filter(access_type == "all") %>% select(guid, name, title, description, content_url)
 
 ```
+
+## Log it
+Last run: `r Sys.time()`
+```{r}
+access_all %>% mutate(content_url = map(content_url, ~htmltools::a(href = .x, as.character(.x))), 
+                          content_url = map(content_url, ~gt::html(as.character(.x)))) %>% gt()
+```
+
 
 # Email if access = all
 ```{r}
