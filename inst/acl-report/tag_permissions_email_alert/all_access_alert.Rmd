@@ -57,7 +57,7 @@ access_all %>% mutate(content_url = map(content_url, ~htmltools::a(href = .x, as
 if(nrow(access_all) == 0){
   suppress_scheduled_email()
 } else {
-  render_connect_email("alert_access_email.rmd") %>%
+  render_connect_email("alert_access_email.Rmd") %>%
     attach_connect_email(subject = "Alert: Access Permissions on Server Audit")
 }
 
