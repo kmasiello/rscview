@@ -15,13 +15,13 @@ thematic_shiny(font = "auto")
 
 board <- pins::board_rsconnect()
 
-pins_used <- c("katie/logs", "katie/user-info")
+pins_used <- c("katie.masiello/logs", "katie.masiello/user-info")
 pin_freshness_tbl <- pin_freshness_tbl(board, pins_used)
 pin_freshness_str <- pin_freshness_str(pin_freshness_tbl = pin_freshness_tbl)
 
 
-logs <- board %>% pin_read("katie/logs")
-users_tbl <- board %>% pin_read("katie/user-info")
+logs <- board %>% pin_read("katie.masiello/logs")
+users_tbl <- board %>% pin_read("katie.masiello/user-info")
 
 historical_users <- get_user_historical_tbl(users_tbl = users_tbl)
 current_users <- get_user_current_tbl(user_historical_tbl = historical_users)
