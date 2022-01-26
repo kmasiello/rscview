@@ -1,0 +1,43 @@
+---
+title: "Assets for Auditing Connect Server"
+output: 
+  html_document:
+    css: custom.css
+---
+
+
+
+```{r setup, include=FALSE}
+library(connectwidgets)
+library(dplyr)
+library(stringr)
+
+knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE)
+
+client <- connect(
+  server  = Sys.getenv("CONNECT_SERVER"),
+  api_key = Sys.getenv("CONNECT_API_KEY")
+  )
+
+all_content <- client %>%
+  content()
+
+audit <- all_content %>% by_tag(tagnames = "Server Audit")
+```
+
+## Dashboards
+```{r}
+audit %>% filter(app_mode == "shiny") %>% rsc_card
+```
+
+
+## Pins
+```{r}
+audit %>% filter(app_mode == "static", content_category == "pin") %>% rsc_grid
+```
+
+## Scheduled Jobs / Pin Generators
+```{r}
+audit %>% filter(app_mode == "rmd-static", str_detect(title, "pin-")) %>% rsc_card()
+```
+
