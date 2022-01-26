@@ -11,6 +11,8 @@ library(ggiraph)
 library(thematic)
 library(showtext)
 
+#TODO historical users plot is off following the auth migration. thinking some users are counted twice? debug needed of users.
+
 thematic_shiny(font = "auto")
 
 board <- pins::board_rsconnect()
