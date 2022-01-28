@@ -6,7 +6,7 @@ output: blastula::blastula_email
 
 The following content tagged with `r tagname` has been set to an access permission of "All":
 
-```{r}
+```{r echo=FALSE}
 library(gt)
 library(purrr)
 
