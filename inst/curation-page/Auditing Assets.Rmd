@@ -30,6 +30,10 @@ audit <- all_content %>% by_tag(tagnames = "Server Audit")
 audit %>% filter(app_mode == "shiny") %>% rsc_card
 ```
 
+## Other Tools 
+```{r}
+audit %>% filter(app_mode == "rmd-static", str_detect(title, "Tool")) %>% rsc_table()
+```
 
 ## Pins
 ```{r}
@@ -39,10 +43,5 @@ audit %>% filter(app_mode == "static", content_category == "pin") %>% rsc_grid
 ## Pin Generators
 ```{r}
 audit %>% filter(app_mode == "rmd-static", str_detect(title, "pin-")) %>% rsc_card()
-```
-
-## Other Tools 
-```{r}
-audit %>% filter(app_mode == "rmd-static", str_detect(title, "Tool")) %>% rsc_table()
 ```
 
