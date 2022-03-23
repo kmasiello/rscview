@@ -6,7 +6,7 @@
 #' @param server Connect server address.
 #' @param key Administrator API key.
 #'
-#' @noRd
+#' @export
 create_pin <- function(
     x,
     name = deparse(substitute(x)),
