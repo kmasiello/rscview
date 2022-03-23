@@ -23,9 +23,9 @@ library(purrr)
 
 ## Pull Content, filter by tag and access = all
 ```{r}
-client <- connect()
+client <- connectapi::connect()
 
-content_tbl <- get_content(client)
+content_tbl <- connectapi::get_content(client)
 
 by_tag <- function(content, tagname) {
   tagname <- as.list(tagname)
