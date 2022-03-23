@@ -10,13 +10,14 @@ create_connection(
 )
 }
 \arguments{
-\item{server}{Connect server address}
+\item{server}{Connect server address.}
 
-\item{key}{Administrator API key}
+\item{key}{Administrator API key.}
 }
 \value{
-An RStudio Connect R6 object that can be passed along to methods
+An RStudio Connect object that can be passed along to methods.
 }
 \description{
-Create connection to Connect server
+The \code{create_connection()} function is used to create a connection to your
+Connect server via the \strong{connectapi} package.
 }
