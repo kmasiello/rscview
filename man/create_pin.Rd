@@ -2,7 +2,7 @@
 % Please edit documentation in R/create_pin.R
 \name{create_pin}
 \alias{create_pin}
-\title{Create pin on Connect}
+\title{Create a pin on Connect}
 \usage{
 create_pin(
   x,
@@ -14,10 +14,12 @@ create_pin(
 )
 }
 \arguments{
-\item{server}{Connect server address}
+\item{x}{An R object (e.g., data frame, list, etc.).}
 
-\item{key}{Administrator API key}
+\item{server}{Connect server address.}
+
+\item{key}{Administrator API key.}
 }
 \description{
-Create pin on Connect
+Helper function used internally to pin audit data in a consistent manner.
 }
