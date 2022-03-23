@@ -2,7 +2,9 @@ Type: Package
 Package: rscview
 Title: Create Admin Dashboards for Connect 
 Version: 0.0.0.9000
-Description: What the package does (one paragraph).
+Description: Dashboards and reports that any Connect administrator will want to
+    use are included here. They are: (1) 'User Report', (2) 'Group Report',
+    (3) 'Content Report', and (4) 'ACL Checker'.
 Authors@R: c(
     person(given = "Katie",
            family = "Masiello",
@@ -13,11 +15,7 @@ Authors@R: c(
            family ="Iannone", 
            role = c("aut"),
            email = "rich@rstudio.com",
-           comment = c(ORCID = "0000-0003-3925-190X")),
-    person(given = "Edgar",
-           family = "Ruiz",
-           role = c("aut"),
-           email = "edgar@rstudio.com")
+           comment = c(ORCID = "0000-0003-3925-190X"))
            )
 License: MIT + file LICENSE
 Encoding: UTF-8
