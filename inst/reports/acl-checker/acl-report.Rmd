@@ -13,13 +13,10 @@ editor_options:
 ---
 
 ```{r packages, include=FALSE}
-# library(rscview)
 library(flexdashboard)
 library(connectapi)
-library(tidyverse)
-library(lubridate)
-library(DT)
-library(reactable)
+library(dplyr)
+library(stringr)
 library(gt)
 ```
 
@@ -27,30 +24,57 @@ library(gt)
 # check_envvars()
 ```
 
-```{r get_users_tbl, include=FALSE}
+
+```{r get_content_tbl, include=FALSE}
 conn <- 
   connectapi::connect(
     server = Sys.getenv("CONNECT_SERVER"),
     api_key = Sys.getenv("CONNECT_API_KEY")
   )
 
+# Requires connectapi version 0.1.0.9033+ to get expected content
 content_tbl <- connectapi::get_content(src = conn, limit = Inf)
-
 ```
 
 ```{r}
-df <- content_tbl %>%
-  select(guid, name, title, access_type, created_time, last_deployed_time)
+df <- 
+  content_tbl %>%
+  dplyr::select(guid, access_type, content_category, app_mode) %>%
+  dplyr::mutate(content_category = ifelse(content_category == "", "Unknown", content_category)) %>%
+  dplyr::mutate(content_category = stringr::str_to_title(content_category)) %>%
+  dplyr::mutate(access_type = dplyr::case_when(
+    access_type == "acl" ~ "ACL",
+    access_type == "all" ~ "All",
+    access_type == "logged_in" ~ "Logged In",
+    TRUE ~ access_type
+  )) %>%
+  dplyr::mutate(content_category = ifelse(content_category == "Unknown", "", paste0(content_category, "-"))) %>%
+  dplyr::mutate(app_mode = tolower(paste0(content_category, app_mode))) %>%
+  dplyr::group_by(access_type, app_mode) %>%
+  dplyr::summarize(Count = n(), .groups = "drop") %>%
+  dplyr::arrange(access_type, desc(Count)) %>%
+  dplyr::group_by(access_type) %>%
+  dplyr::mutate(Pct = Count / sum(Count)) %>%
+  dplyr::ungroup()
 
-df %>% count(access_type, sort = TRUE) %>%
-  gt() %>%
-  tab_header(
+df %>% 
+  gt::gt(rowname_col = "app_mode", groupname_col = "access_type") %>%
+  gt::tab_header(
     title = "Sharing Settings",
     subtitle = "RStudio Connect Server Content Audit"
   ) %>%
-  cols_label(
-    access_type = "Access Type",
-    n = "Count"
-  )
+  gt::cols_width(
+    app_mode ~ gt::px(150),
+    Count ~ gt::px(100),
+    Pct ~ gt::px(100)
+  ) %>%
+  gt::fmt_integer(columns = Count) %>%
+  gt::fmt_percent(columns = Pct, decimals = 0) %>%
+  gt::opt_all_caps() %>%
+  gt::text_transform(
+    locations = cells_body(columns = Pct),
+    fn = function(x) ifelse(x == "0%", "<1%", x)
+  ) %>%
+  gt::row_group_order(c("All", "Logged In", "ACL"))
 ```
 
