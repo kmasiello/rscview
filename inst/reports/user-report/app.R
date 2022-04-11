@@ -11,7 +11,7 @@ library(ggiraph)
 library(thematic)
 library(showtext)
 
-#TODO historical users plot is off following the auth migration. thinking some users are counted twice? debug needed of users.
+#TODO historical users plot is off following the auth migration. thinking some users are counted twice? debug needed of users. -- count off of user guid, not userid
 
 thematic_shiny(font = "auto")
 
@@ -47,7 +47,7 @@ lock_history <- logs %>% get_lock_history_tbl()
 
 # user creation history -- I'm doing this from the get_user dataframe and not from the audit logs because the audit logs can show user creation under the events of "add_user" or "add_group_member" depending on the auth mechanism. Colorado has this split in the data in how users are added.
 creation_history <- historical_users %>%
-  select(username, created_time) %>%
+  select(username, guid, created_time) %>%
   mutate(event = "created") %>%
   dplyr::rename("event_time" = created_time) %>%
   arrange(event_time)
@@ -55,12 +55,12 @@ creation_history <- historical_users %>%
 
 #when do users drop off the NU count? Identify date they no longer counted.
 drop_off_history <- historical_users %>%
-  select(username, days_since_active, active_time) %>%
+  select(username, guid, days_since_active, active_time) %>%
   filter(as_date(active_time) < (today() - dyears(1))) %>%
   mutate(event_time = as_date(active_time) + dyears(1)) %>%
   select(-days_since_active, -active_time) %>%
   mutate(event = "dropped")
-
+##CHANGE TO GUID
 event_history <- bind_rows(creation_history, lock_history, drop_off_history) %>%
   left_join(select(historical_users, username, active_time), by = "username" ) %>%
   arrange(event_time) %>%
@@ -104,15 +104,26 @@ event_history <- bind_rows(creation_history, lock_history, drop_off_history) %>%
   mutate(usercount = cumsum(result))
 
 # Historical named user plot
+group.colors <- c(created = "#23b5d3", dropped = "#F9E58B", locked ="#584F69", unlocked = "#B85156")
+
 plot_NU <- ggplot(event_history, aes(x = event_time, y = usercount, color = event)) +
-  geom_step(color = "#4C8187") +
-  geom_point(alpha = 0.6) +
-  geom_point_interactive(aes(tooltip=paste(username, "\n", as_date(event_time), "\n", event, "\nUser count:",usercount), data_id=username)) +
+  geom_step(color = "#7F929F") +
+  scale_color_manual(values = group.colors) +
+  geom_point_interactive(aes(tooltip=paste(username, "\n", as_date(event_time), "\n",
+                                           event, "\nUser count:",usercount), data_id=username),
+                         alpha = 0.7) +
   labs(x = "Date", y = "Named Users", title = "Historical Named Users") +
   theme_minimal() +
-  theme(legend.position="bottom") +
-  geom_hline_interactive(yintercept = users_licensed, color="gray50",linetype = "dashed", tooltip=paste(users_licensed, "Current Named Users"))
-
+  theme(legend.position="right", axis.text = element_text(size=15),
+        axis.title = element_text(size=20),
+        title = element_text(size=30),
+        legend.title = element_text(size=15),
+        legend.text = element_text(size=12, hjust=0)
+  ) +
+  geom_hline_interactive(yintercept = users_licensed, color="gray60",
+                         linetype = "dashed", tooltip=paste(users_licensed, "Current Named Users"))+
+  annotate("text",x=min(event_history$event_time), y = (users_licensed)*1.02, label=paste("Named Users:",users_licensed),
+           hjust=0)
 # girafe(ggobj = plot_NU)
 
 
@@ -160,9 +171,9 @@ plot_role <- ggplot(history_role, aes(x = event_time, y = user_add_num, color = 
 #### UI #####
 ui <-
   tagList(
-  tags$head(tags$link(rel = "stylesheet", type = "text/css", href = "custom.css"),
-    tags$style(HTML(
-      "html {position: relative;
+    tags$head(tags$link(rel = "stylesheet", type = "text/css", href = "custom.css"),
+              tags$style(HTML(
+                "html {position: relative;
              min-height: 100%;}
            body {margin-bottom: 60px;} /* Margin bottom by footer height */
            .footer {
@@ -172,47 +183,47 @@ ui <-
              height: 60px; /* Set the fixed height of the footer here */
              background-color: #f5f5f5;
            }"))),
-  navbarPage(
-    title = "Users on RStudio Connect",
-    header = tagList(
-      useShinydashboard()
-    ),
-    tabPanel(
-      title = "Current Named User Details",
-      fluidRow(valueBoxOutput("users_licensed", width = 3),
-               valueBoxOutput("users_admins", width = 3),
-               valueBoxOutput("users_pubs", width = 3),
-               valueBoxOutput("users_viewers", width = 3)
+    navbarPage(
+      title = "Users on RStudio Connect",
+      header = tagList(
+        useShinydashboard()
       ),
+      tabPanel(
+        title = "Current Named User Details",
+        fluidRow(valueBoxOutput("users_licensed", width = 3),
+                 valueBoxOutput("users_admins", width = 3),
+                 valueBoxOutput("users_pubs", width = 3),
+                 valueBoxOutput("users_viewers", width = 3)
+        ),
 
-      fluidRow(
-        box("Current Named Users", width = 12,
-            fluidRow(align="right", downloadButton("downloadData", "Download")),
-            fluidRow(reactableOutput("current_named_users"))
-            )
+        fluidRow(
+          box("Current Named Users", width = 12,
+              fluidRow(align="right", downloadButton("downloadData", "Download")),
+              fluidRow(reactableOutput("current_named_users"))
+          )
+        )
+
+      ),
+      tabPanel(
+        title = "Historical Named User Details",
+        fluidRow(
+          box("Licensed Named Users", width = 10,
+              girafeOutput("plot_NU_interactive")))
+      ),
+      tabPanel(
+        title = "Historical User Additions",
+
+        fluidRow(
+          box("All Time User Additions to Server/Cluster",
+              girafeOutput("plot_historical_interactive")),
+          box("By Role",
+              girafeOutput("plot_role_interactive"))
+        )
+
       )
-
-    ),
-    tabPanel(
-      title = "Historical Named User Details",
-      fluidRow(
-        box("Licensed Named Users", width = 10,
-                           girafeOutput("plot_NU_interactive")))
-    ),
-    tabPanel(
-      title = "Historical User Additions",
-
-      fluidRow(
-        box("All Time User Additions to Server/Cluster",
-            girafeOutput("plot_historical_interactive")),
-        box("By Role",
-            girafeOutput("plot_role_interactive"))
-      )
-
-    )
     ), #end navbarPage
-  tags$footer(paste("Data sourced from:",pin_freshness_str), class = "footer")
-)
+    tags$footer(paste("Data sourced from:",pin_freshness_str), class = "footer")
+  )
 
 
 ##### SERVER ######
