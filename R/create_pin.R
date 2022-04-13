@@ -13,7 +13,8 @@ create_pin <- function(
     description = deparse(substitute(x)),
     server = Sys.getenv("CONNECT_SERVER"),
     key = Sys.getenv("CONNECT_API_KEY"),
-    metadata = list("server_audit" = TRUE)
+    metadata = list("server_audit" = TRUE),
+    type = NULL
 ) {
 
   board <-
@@ -23,5 +24,5 @@ create_pin <- function(
       key = key
     )
 
-  pins::pin_write(board, x, name = name, metadata = metadata)
+  pins::pin_write(board, x, name = name, type = type, metadata = metadata)
 }

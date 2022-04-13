@@ -40,7 +40,7 @@ Info: `get_audit_logs` took `r paste(round(duration[[1]], 2),  units(duration))`
 
 
 
-create_pin(logs, description = "Results pulled via `connectapi::get_audit_logs()` for audit reports")
+create_pin(logs, description = "Results pulled via `connectapi::get_audit_logs()` for audit reports", type = "qs")
 ```
 
 ```{r}
