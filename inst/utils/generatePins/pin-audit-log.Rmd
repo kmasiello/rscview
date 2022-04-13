@@ -8,6 +8,7 @@ output: html_document
 library(rscview)
 library(connectapi)
 library(pins)
+library(qs)
 
 ```
 
@@ -41,6 +42,10 @@ Info: `get_audit_logs` took `r paste(round(duration[[1]], 2),  units(duration))`
 
 
 create_pin(logs, description = "Results pulled via `connectapi::get_audit_logs()` for audit reports", type = "qs")
+
+
+#prune versions to keep server from exploding
+board %>% pin_versions_prune("katie.masiello/logs", n=4)
 ```
 
 ```{r}
