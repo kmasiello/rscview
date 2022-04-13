@@ -26,18 +26,15 @@ library(gt)
 
 
 ```{r get_content_tbl, include=FALSE}
-conn <- 
-  connectapi::connect(
-    server = Sys.getenv("CONNECT_SERVER"),
-    api_key = Sys.getenv("CONNECT_API_KEY")
-  )
 
-# Requires connectapi version 0.1.0.9033+ to get expected content
-content_tbl <- connectapi::get_content(src = conn, limit = Inf)
+board <- pins::board_rsconnect()
+
+content_tbl <- board %>% pins::pin_read("katie.masiello/content_list")
 ```
 
-```{r}
-df <- 
+```{r echo=FALSE}
+
+df <-
   content_tbl %>%
   dplyr::select(guid, access_type, content_category, app_mode) %>%
   dplyr::mutate(content_category = ifelse(content_category == "", "Unknown", content_category)) %>%
@@ -50,6 +47,13 @@ df <-
   )) %>%
   dplyr::mutate(content_category = ifelse(content_category == "Unknown", "", paste0(content_category, "-"))) %>%
   dplyr::mutate(app_mode = tolower(paste0(content_category, app_mode))) %>%
+  dplyr::mutate(app_mode = dplyr::case_when(
+    grepl("tensorflow", app_mode) ~ "tensorflow",
+    app_mode == "shiny-shiny" ~ "shiny",
+    app_mode == "api-api" ~ "api",
+    app_mode == "static-static" ~ "static",
+    TRUE ~ app_mode
+  )) %>%
   dplyr::group_by(access_type, app_mode) %>%
   dplyr::summarize(Count = n(), .groups = "drop") %>%
   dplyr::arrange(access_type, desc(Count)) %>%
@@ -57,24 +61,54 @@ df <-
   dplyr::mutate(Pct = Count / sum(Count)) %>%
   dplyr::ungroup()
 
+```
+
+
+
+```{r}
+
+# Include a toggle button that switches between different gt tables: (1) with counts, and
+# (2) with percentages
+
+# Want to have a drilldown where if you press a column button (we need to make the columns as
+# buttons) then we get a view of the detailed information for All, Logged In, and ACL
+
+# Table with counts
 df %>% 
-  gt::gt(rowname_col = "app_mode", groupname_col = "access_type") %>%
+  dplyr::select(-Pct) %>%
+  tidyr::pivot_wider(names_from = access_type, values_from = Count) %>%
+  dplyr::select(app_mode, All, `Logged In`, ACL) %>%
+  gt::gt(rowname_col = "app_mode") %>%
   gt::tab_header(
     title = "Sharing Settings",
     subtitle = "RStudio Connect Server Content Audit"
   ) %>%
-  gt::cols_width(
-    app_mode ~ gt::px(150),
-    Count ~ gt::px(100),
-    Pct ~ gt::px(100)
-  ) %>%
-  gt::fmt_integer(columns = Count) %>%
-  gt::fmt_percent(columns = Pct, decimals = 0) %>%
+  gt::fmt_missing(columns = everything(), missing_text = "0") %>%
+  gt::cols_width(1 ~ gt::px(200), everything() ~ gt::px(89)) %>%
   gt::opt_all_caps() %>%
-  gt::text_transform(
-    locations = cells_body(columns = Pct),
-    fn = function(x) ifelse(x == "0%", "<1%", x)
+  gt::opt_vertical_padding(scale = 0.65) %>%
+  gt::opt_row_striping() %>%
+  gt::opt_align_table_header(align = "left")
+
+# Table with Percentages
+df %>% 
+  dplyr::select(-Count) %>%
+  tidyr::pivot_wider(names_from = access_type, values_from = Pct) %>%
+  dplyr::select(app_mode, All, `Logged In`, ACL) %>%
+  gt::gt(rowname_col = "app_mode") %>%
+  gt::tab_header(
+    title = "Sharing Settings",
+    subtitle = "RStudio Connect Server Content Audit"
   ) %>%
-  gt::row_group_order(c("All", "Logged In", "ACL"))
+  gt::fmt_percent(columns = everything(), decimals = 0) %>%
+  gt::cols_width(1 ~ gt::px(200), everything() ~ gt::px(89)) %>%
+  gt::opt_all_caps() %>%
+  gt::opt_vertical_padding(scale = 0.65) %>%
+  gt::opt_row_striping() %>%
+  gt::opt_align_table_header(align = "left") %>%
+  gt::text_transform(
+    locations = cells_body(),
+    fn = function(x) dplyr::case_when(x == "0%" ~ "<1%", x == "NA" ~ "0%", TRUE ~ x)
+  )
 ```
 
