@@ -10,6 +10,7 @@ library(ggplot2)
 library(ggiraph)
 library(thematic)
 library(showtext)
+library(qs)
 
 #TODO historical users plot is off following the auth migration. thinking some users are counted twice? debug needed of users. -- count off of user guid, not userid
 
