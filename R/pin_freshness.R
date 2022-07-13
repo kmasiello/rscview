@@ -1,20 +1,24 @@
 #' Pin Freshness Tibble
 #'
+#' @description
+#'
 #' @param board the connect board
-#' @param pin_names vector of full path ("username/pin-name") pin names on server
+#' @param pin_names vector of full path ("username/pin-name") pin names on
+#' server.
 #'
 #' @return a tibble of pin name and create date
 #' @export
 #'
-pin_freshness_tbl <- function(board = pins::board_rsconnect(), pin_names = pins_used) {
-  #TODO name me better
+pin_freshness_tbl <- function(
+    pin_names,
+    board = pins::board_rsconnect()
+) {
+  # TODO: name me better
 
   purrr::map_df(pin_names, .f = function(x) {
     meta <- board %>% pins::pin_meta(x)
     dplyr::tibble(name = x, created = meta$created)
     })
-
-
 }
 
 #' Pin Freshness String
