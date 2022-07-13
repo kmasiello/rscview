@@ -1,10 +1,20 @@
-#' Get the Groups Table via Connect API
+#' Get the Groups Table via the Connect API
+#'
+#' @description
+#' This provides a tibble that relates to all content on Connect. It has the
+#' following columns:
+#'
+#' - email:
+#' - username:
+#' - first_name:
+#' - last_name:
+#' - user_role:
+#' - group_name:
 #'
 #' @param conn the Connect server connection details containing the server and
-#'   API key
+#'   API key.
 #'
 #' @return a tibble
-#'
 #' @export
 get_group_members_tbl <- function(conn = create_connection()) {
 
