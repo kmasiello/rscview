@@ -10,7 +10,8 @@ create_pin(
   description = deparse(substitute(x)),
   server = Sys.getenv("CONNECT_SERVER"),
   key = Sys.getenv("CONNECT_API_KEY"),
-  metadata = list(server_audit = TRUE)
+  metadata = list(server_audit = TRUE),
+  type = NULL
 )
 }
 \arguments{

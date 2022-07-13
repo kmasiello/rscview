@@ -2,17 +2,26 @@
 % Please edit documentation in R/get_groups_tbl.R
 \name{get_group_members_tbl}
 \alias{get_group_members_tbl}
-\title{Get the Groups Table via Connect API}
+\title{Get the Groups Table via the Connect API}
 \usage{
 get_group_members_tbl(conn = create_connection())
 }
 \arguments{
 \item{conn}{the Connect server connection details containing the server and
-API key}
+API key.}
 }
 \value{
 a tibble
 }
 \description{
-Get the Groups Table via Connect API
+This provides a tibble that relates to all content on Connect. It has the
+following columns:
+\itemize{
+\item email:
+\item username:
+\item first_name:
+\item last_name:
+\item user_role:
+\item group_name:
+}
 }
