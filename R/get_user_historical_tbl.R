@@ -1,16 +1,3 @@
-#' Get the Users Table via Connect API
-#'
-#' @param conn the Connect server connection details containing the server and API key
-#'
-#' @return a tibble
-#'
-#' @export
-get_users_tbl <- function(conn = create_connection()){
-  users_tbl_raw <- connectapi::get_users(src = conn, limit = Inf)
-
-
-}
-
 #' Get historical user table based on Connect API user table
 #'
 #' @param users_tbl  the Users Table via Connect API. By default the user table will be fetched via `get_users_tbl()`
