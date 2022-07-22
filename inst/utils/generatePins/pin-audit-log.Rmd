@@ -39,7 +39,7 @@ Info: `get_audit_logs` took `r paste(round(duration[[1]], 2),  units(duration))`
 ## Pin to RStudio Connect
 ```{r pin_it}
 
-
+board <- pins::board_rsconnect()
 
 create_pin(logs, description = "Results pulled via `connectapi::get_audit_logs()` for audit reports", type = "qs")
 
