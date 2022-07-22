@@ -13,9 +13,6 @@ create_tag_pin(pin_id, tag_name, conn = create_connection())
 
 \item{conn}{connection}
 }
-\value{
-
-}
 \description{
 Create Tag for pinned content
 }

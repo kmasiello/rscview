@@ -6,9 +6,6 @@
 \usage{
 check_envvars()
 }
-\value{
-
-}
 \description{
 Check that CONNECT_SERVER and CONNECT_API_KEY environment variables are set
 }

@@ -2,16 +2,53 @@
 % Please edit documentation in R/get_content_tbl.R
 \name{get_content_tbl}
 \alias{get_content_tbl}
-\title{Get the Content table from the Connect server via \code{connectapi}}
+\title{Get the Content table via the Connect API}
 \usage{
 get_content_tbl(conn = create_connection())
 }
 \arguments{
-\item{conn}{the Connect server connection details containing the server and API key}
+\item{conn}{the Connect server connection details containing the server and
+API key.}
 }
 \value{
 a tibble
 }
 \description{
-Get the Content table from the Connect server via \code{connectapi}
+This provides a tibble that relates to all content on Connect. It has the
+following columns:
+\itemize{
+\item guid:
+\item name:
+\item title:
+\item description:
+\item access_type:
+\item connection_timeout:
+\item read_timeout:
+\item init_timeout:
+\item idle_timeout:
+\item max_processes:
+\item min_processes:
+\item max_conns_per_process:
+\item load_factor:
+\item created_time:
+\item last_deployed_time:
+\item bundle_id:
+\item app_mode:
+\item content_category:
+\item parameterized:
+\item cluster_name:
+\item image_name:
+\item r_version:
+\item py_version:
+\item quarto_version:
+\item run_as:
+\item run_as_current_user:
+\item owner_guid:
+\item content_url:
+\item dashboard_url:
+\item app_role:
+\item id:
+\item owner:
+\item tags:
+}
 }
