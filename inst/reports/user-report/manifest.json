@@ -148,7 +148,7 @@
       }
     },
     "RApiSerialize": {
-      "Source": "repo_DZLJOHWO",
+      "Source": "repo_JFURNQLC",
       "Repository": "https://packagemanager.rstudio.com/all/latest",
       "GithubRepo": null,
       "GithubUsername": null,
@@ -228,7 +228,7 @@
       }
     },
     "RcppParallel": {
-      "Source": "repo_DZLJOHWO",
+      "Source": "repo_JFURNQLC",
       "Repository": "https://packagemanager.rstudio.com/all/latest",
       "GithubRepo": null,
       "GithubUsername": null,
@@ -260,7 +260,7 @@
       }
     },
     "arrow": {
-      "Source": "repo_DZLJOHWO",
+      "Source": "repo_JFURNQLC",
       "Repository": "https://packagemanager.rstudio.com/all/latest",
       "GithubRepo": null,
       "GithubUsername": null,
@@ -847,7 +847,7 @@
       }
     },
     "config": {
-      "Source": "repo_DZLJOHWO",
+      "Source": "repo_JFURNQLC",
       "Repository": "https://packagemanager.rstudio.com/all/latest",
       "GithubRepo": null,
       "GithubUsername": null,
@@ -1340,7 +1340,7 @@
       }
     },
     "filelock": {
-      "Source": "repo_DZLJOHWO",
+      "Source": "repo_JFURNQLC",
       "Repository": "https://packagemanager.rstudio.com/all/latest",
       "GithubRepo": null,
       "GithubUsername": null,
@@ -1368,7 +1368,7 @@
       }
     },
     "flexdashboard": {
-      "Source": "repo_DZLJOHWO",
+      "Source": "repo_JFURNQLC",
       "Repository": "https://packagemanager.rstudio.com/all/latest",
       "GithubRepo": null,
       "GithubUsername": null,
@@ -2005,7 +2005,7 @@
       }
     },
     "httpuv": {
-      "Source": "repo_DZLJOHWO",
+      "Source": "repo_JFURNQLC",
       "Repository": "https://packagemanager.rstudio.com/all/latest",
       "GithubRepo": null,
       "GithubUsername": null,
@@ -2671,7 +2671,7 @@
       }
     },
     "pins": {
-      "Source": "repo_DZLJOHWO",
+      "Source": "repo_JFURNQLC",
       "Repository": "https://packagemanager.rstudio.com/all/latest",
       "GithubRepo": null,
       "GithubUsername": null,
@@ -2821,7 +2821,7 @@
       }
     },
     "promises": {
-      "Source": "repo_DZLJOHWO",
+      "Source": "repo_JFURNQLC",
       "Repository": "https://packagemanager.rstudio.com/all/latest",
       "GithubRepo": null,
       "GithubUsername": null,
@@ -2921,7 +2921,7 @@
       }
     },
     "qs": {
-      "Source": "repo_DZLJOHWO",
+      "Source": "repo_JFURNQLC",
       "Repository": "https://packagemanager.rstudio.com/all/latest",
       "GithubRepo": null,
       "GithubUsername": null,
@@ -3330,7 +3330,7 @@
       "GithubRepo": "rscview",
       "GithubUsername": "kmasiello",
       "GithubRef": "HEAD",
-      "GithubSha1": "85f860e1f951ddae8b858b427d49bde0bab6f683",
+      "GithubSha1": "8ae71c70fc2a5f7d0af0a2f8fc040072a9e71e25",
       "description": {
         "Type": "Package",
         "Package": "rscview",
@@ -3349,16 +3349,16 @@
         "RemoteRepo": "rscview",
         "RemoteUsername": "kmasiello",
         "RemoteRef": "HEAD",
-        "RemoteSha": "85f860e1f951ddae8b858b427d49bde0bab6f683",
+        "RemoteSha": "8ae71c70fc2a5f7d0af0a2f8fc040072a9e71e25",
         "GithubRepo": "rscview",
         "GithubUsername": "kmasiello",
         "GithubRef": "HEAD",
-        "GithubSHA1": "85f860e1f951ddae8b858b427d49bde0bab6f683",
+        "GithubSHA1": "8ae71c70fc2a5f7d0af0a2f8fc040072a9e71e25",
         "NeedsCompilation": "no",
-        "Packaged": "2022-07-21 14:54:42 UTC; katie",
+        "Packaged": "2022-07-22 20:07:18 UTC; katie",
         "Author": "Katie Masiello [aut, cre] (<https://orcid.org/0000-0002-6155-0909>),\n  Richard Iannone [aut] (<https://orcid.org/0000-0003-3925-190X>)",
         "Maintainer": "Katie Masiello <katie.masiello@rstudio.com>",
-        "Built": "R 4.2.1; ; 2022-07-21 14:54:43 UTC; unix"
+        "Built": "R 4.2.1; ; 2022-07-22 20:07:19 UTC; unix"
       }
     },
     "rstudioapi": {
@@ -3521,7 +3521,7 @@
       }
     },
     "shiny": {
-      "Source": "repo_DZLJOHWO",
+      "Source": "repo_JFURNQLC",
       "Repository": "https://packagemanager.rstudio.com/all/latest",
       "GithubRepo": null,
       "GithubUsername": null,
@@ -3556,7 +3556,7 @@
       }
     },
     "shinyWidgets": {
-      "Source": "repo_DZLJOHWO",
+      "Source": "repo_JFURNQLC",
       "Repository": "https://packagemanager.rstudio.com/all/latest",
       "GithubRepo": null,
       "GithubUsername": null,
@@ -3587,7 +3587,7 @@
       }
     },
     "shinydashboard": {
-      "Source": "repo_DZLJOHWO",
+      "Source": "repo_JFURNQLC",
       "Repository": "https://packagemanager.rstudio.com/all/latest",
       "GithubRepo": null,
       "GithubUsername": null,
@@ -3616,7 +3616,7 @@
       }
     },
     "showtext": {
-      "Source": "repo_DZLJOHWO",
+      "Source": "repo_JFURNQLC",
       "Repository": "https://packagemanager.rstudio.com/all/latest",
       "GithubRepo": null,
       "GithubUsername": null,
@@ -3650,7 +3650,7 @@
       }
     },
     "showtextdb": {
-      "Source": "repo_DZLJOHWO",
+      "Source": "repo_JFURNQLC",
       "Repository": "https://packagemanager.rstudio.com/all/latest",
       "GithubRepo": null,
       "GithubUsername": null,
@@ -3679,7 +3679,7 @@
       }
     },
     "sourcetools": {
-      "Source": "repo_DZLJOHWO",
+      "Source": "repo_JFURNQLC",
       "Repository": "https://packagemanager.rstudio.com/all/latest",
       "GithubRepo": null,
       "GithubUsername": null,
@@ -3708,7 +3708,7 @@
       }
     },
     "stringfish": {
-      "Source": "repo_DZLJOHWO",
+      "Source": "repo_JFURNQLC",
       "Repository": "https://packagemanager.rstudio.com/all/latest",
       "GithubRepo": null,
       "GithubUsername": null,
@@ -3840,7 +3840,7 @@
       }
     },
     "sysfonts": {
-      "Source": "repo_DZLJOHWO",
+      "Source": "repo_JFURNQLC",
       "Repository": "https://packagemanager.rstudio.com/all/latest",
       "GithubRepo": null,
       "GithubUsername": null,
@@ -3905,7 +3905,7 @@
       }
     },
     "thematic": {
-      "Source": "repo_DZLJOHWO",
+      "Source": "repo_JFURNQLC",
       "Repository": "https://packagemanager.rstudio.com/all/latest",
       "GithubRepo": null,
       "GithubUsername": null,
@@ -4435,7 +4435,7 @@
       }
     },
     "xtable": {
-      "Source": "repo_DZLJOHWO",
+      "Source": "repo_JFURNQLC",
       "Repository": "https://packagemanager.rstudio.com/all/latest",
       "GithubRepo": null,
       "GithubUsername": null,
