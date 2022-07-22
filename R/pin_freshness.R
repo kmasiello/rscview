@@ -10,8 +10,8 @@
 #' @export
 #'
 pin_freshness_tbl <- function(
-    pin_names,
-    board = pins::board_rsconnect()
+    board = pins::board_rsconnect(),
+    pin_names
 ) {
   # TODO: name me better
 
