@@ -15,4 +15,7 @@ get_user_current_tbl - Get current user table (uses an intermediate table)
 get_user_historical_tbl - Get historical user table based on Connect API user table (w/ users_tbl)
 get_users_daysback - Get Users that have been active in the last `daysback` days
 get_users_role - Get Users by role (uses the users_tbl)
-make_group_members_tbl - 
+make_group_members_tbl - A table for the 'group-report' Shiny app
+pin_freshness_tbl - Gets a table of update dates for any number of pins
+pin_freshness_str - Provides a string using a `pin_freshness_tbl` for reporting in Shiny
+rscview_settings - Provides a way to store and retrieve settings for rscview
