@@ -65,20 +65,23 @@ get_groups_summary <- function(group_names_tbl = group_names_tbl, group_members_
 #' @return a reactable table
 #'
 #' @export
+make_group_members_tbl <- function(
+    group_members_tbl = group_members_tbl,
+    group_name = selectedgroup()
+) {
 
-make_group_members_tbl <- function(group_members_tbl = group_members_tbl,
-                                   group_name = selectedgroup()) {
-  if(length(group_name)==0){
+  if (length(group_name) == 0) {
+
     reactable::reactable(
       group_members_tbl, searchable = TRUE, highlight = TRUE,
       filterable = TRUE, width = "100%"
     )
-  }else
-
+  } else {
     reactable::reactable(
       dplyr::filter(group_members_tbl, group_name == group_name), searchable = TRUE, highlight = TRUE,
       filterable = TRUE, width = "100%"
     )
+  }
 }
 
 #' List the names of groups on the Connect server
