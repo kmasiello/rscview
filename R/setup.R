@@ -22,6 +22,8 @@ rscview_settings <- function(
     )
 
   # Write the YAML to the working directory (for now)
+  # TODO: Explore using rappdirs https://github.com/r-lib/rappdirs for better
+  # portability and standardization
   yaml::write_yaml(yaml_list, file = file)
 }
 
