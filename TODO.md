@@ -8,10 +8,6 @@ get_group_members_tbl - Get the Groups Table via the Connect API
 
 ## Provides a table though a pin
 
-
-get_group_names - List the names of groups on the Connect server
-
-
 get_group_names - List the names of groups on the Connect server (gives a vector)
 get_groups_summary - Get a Summary of the Groups Table (uses an intermediate table)
 get_lock_history_tbl - Get Locking event history from audit logs
